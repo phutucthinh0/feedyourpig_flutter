@@ -58,6 +58,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/audio/
+    - assets/images/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
@@ -83,6 +85,10 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+  fonts:
+    - family: Nolan
+      fonts:
+        - asset: assets/font/font.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
