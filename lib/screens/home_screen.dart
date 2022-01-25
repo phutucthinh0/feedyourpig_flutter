@@ -1,3 +1,4 @@
+import 'package:feedyourpig_flutter/helper/button_ui.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,8 +12,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("ABC")),
-      body: Column(
-        children: [],
+      body: Stack(
+        children: [
+          Image.asset('assets/background_main'),
+        ],
       ),
     );
   }
