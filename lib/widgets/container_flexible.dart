@@ -9,15 +9,14 @@ class ContainerFlexible extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: Get.width,
-      height: Get.height,
-      decoration: decoration,
-      constraints: BoxConstraints(
-        maxWidth: SystemConstant.maxWidth(),
-        maxHeight: SystemConstant.maxHeight(),
+    return Center(
+      child: Container(
+        alignment: Alignment.center,
+        width: SystemConstant.width(),
+        height: SystemConstant.height(),
+        decoration: decoration,
+        child: child,
       ),
-      child: child,
     );
   }
 }
