@@ -1,6 +1,9 @@
 
+
 import 'package:feedyourpig_flutter/helper/button_ui.dart';
+import 'package:feedyourpig_flutter/helper/dialog_ui/dialog_setting.dart';
 import 'package:feedyourpig_flutter/helper/text_ui.dart';
+import 'package:feedyourpig_flutter/screens/gallery_screen.dart';
 import 'package:feedyourpig_flutter/screens/game_screen.dart';
 import 'package:feedyourpig_flutter/utils/system/ui_util.dart';
 import 'package:feedyourpig_flutter/widgets/container_flexible.dart';
@@ -15,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   @override
   void initState() {
     // TODO: implement initState
@@ -53,8 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 text: "Gallery",
                 fontSize: 36,
                 margin: EdgeInsets.only(top: 140),
-                onTap: (){
-                },
+                onTap:()=>Get.to(()=>GalleryScreen()),
               ),
             ),
             Align(
@@ -66,10 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: 36,
                 margin: EdgeInsets.only(top:320),
                 onTap: (){
+                  showDialogSetting(context);
                 },
               ),
             ),
-
           ],
         ),
       ),

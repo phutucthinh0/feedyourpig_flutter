@@ -1,3 +1,6 @@
+import 'package:feedyourpig_flutter/flame/main_game.dart';
+import 'package:feedyourpig_flutter/widgets/container_flexible.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 class PlayScreen extends StatefulWidget {
@@ -7,8 +10,19 @@ class PlayScreen extends StatefulWidget {
 }
 
 class _PlayScreenState extends State<PlayScreen> {
+  final mainGame = MainGame();
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: ContainerFlexible(
+        child: Stack(
+          children: [
+            GameWidget(
+              game: mainGame,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

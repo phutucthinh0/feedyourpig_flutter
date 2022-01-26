@@ -27,13 +27,11 @@ class _GameScreenState extends State<GameScreen> {
             fit: BoxFit.cover
           )
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Image.asset("assets/images/star1.png", width: 50, height: 50,),
-              ElevatedButton(onPressed: ()=>Get.to(()=>PlayScreen()), child: Text('Go to play'))
-            ],
-          ),
+        child: Column(
+          children: [
+            Image.asset("assets/images/star1.png", width: 50, height: 50,),
+            ElevatedButton(onPressed: ()=>Get.to(()=>PlayScreen()), child: Text('Go to play'))
+          ],
         ),
       )
     );
