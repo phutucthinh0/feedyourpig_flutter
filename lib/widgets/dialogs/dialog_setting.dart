@@ -1,7 +1,6 @@
 
+import 'package:feedyourpig_flutter/helper/text_ui.dart';
 import 'package:flutter/material.dart';
-
-import '../text_ui.dart';
 
 Future<void> showDialogSetting(BuildContext context) async{
   bool isMusicOn = true;
@@ -23,7 +22,7 @@ Future<void> showDialogSetting(BuildContext context) async{
               padding: EdgeInsets.only(top:80, left: 20, right: 20),
               decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/dialog_background.png'),
+                    image: AssetImage('assets/images/background/dialog_background.png'),
                   )
               ),
               child: Column(
@@ -41,7 +40,7 @@ Future<void> showDialogSetting(BuildContext context) async{
                           height: 40, width: 40,
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/images/btnstyle.png'),
+                                image: AssetImage('assets/images/button/btnstyle.png'),
                               )
                           ),
                           child: Icon((isMusicOn== false) ?Icons.music_note_outlined : Icons.music_off_outlined),
@@ -67,7 +66,7 @@ Future<void> showDialogSetting(BuildContext context) async{
                           height: 40, width: 40,
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/images/btnstyle.png'),
+                                image: AssetImage('assets/images/button/btnstyle.png'),
                               )
                           ),
                           child: Icon((isSoundOn== false) ?Icons.volume_up : Icons.volume_off),
@@ -93,7 +92,7 @@ Future<void> showDialogSetting(BuildContext context) async{
                           height: 40, width: 40,
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/images/btnstyle.png'),
+                                image: AssetImage('assets/images/button/btnstyle.png'),
                               )
                           ),
                           child: Icon((isVibrationOn== false) ?Icons.blur_on_outlined : Icons.blur_off_outlined),

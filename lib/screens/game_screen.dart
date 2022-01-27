@@ -23,13 +23,13 @@ class _GameScreenState extends State<GameScreen> {
       body: ContainerFlexible(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/background.png"),
+            image: AssetImage("assets/images/background/background.png"),
             fit: BoxFit.cover
           )
         ),
         child: Column(
           children: [
-            Image.asset("assets/images/star1.png", width: 50, height: 50,),
+            Image.asset("assets/images/icon/ic_star_1.png", width: 50, height: 50,),
             ElevatedButton(onPressed: ()=>Get.to(()=>PlayScreen()), child: Text('Go to play'))
           ],
         ),

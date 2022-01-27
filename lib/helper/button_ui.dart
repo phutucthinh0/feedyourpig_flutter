@@ -47,7 +47,7 @@ class _ButtonUI extends State<ButtonUI> {
           height: widget.height,
           margin: widget.margin,
           decoration: BoxDecoration(
-            image: DecorationImage(image: AssetImage('assets/images/btnstylenext.png'),fit: BoxFit.fill),
+            image: DecorationImage(image: AssetImage('assets/images/button/btnstylenext.png'),fit: BoxFit.fill),
           ),
           child: Center(child: Text(widget.text,style: TextStyle(fontSize: widget.fontSize,fontWeight: widget.fontWeight,color: widget.textColor,fontFamily: 'Nolan'))),
         ),
