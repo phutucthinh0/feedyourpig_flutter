@@ -1,6 +1,12 @@
-import 'package:feedyourpig_flutter/utils/system/ui_util.dart';
+
+import 'package:feedyourpig_flutter/helper/button_ui.dart';
+import 'package:feedyourpig_flutter/values/candy.dart';
+import 'package:feedyourpig_flutter/values/pig.dart';
 import 'package:feedyourpig_flutter/widgets/container_flexible.dart';
 import 'package:flutter/material.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+
 
 class GalleryScreen extends StatefulWidget {
   @override
@@ -8,51 +14,130 @@ class GalleryScreen extends StatefulWidget {
 }
 
 class _GalleryScreenState extends State<GalleryScreen> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    UIUtil.fullscreen();
+  final PageController controller = PageController(initialPage: 0);
+  AssetImage _candyCharacter = AssetImage(CandyCode.type0);
+  _handleSelectedCandy(int typeCandy){
+    setState(() {
+      _candyCharacter = AssetImage(CandyCode.listCandy()[typeCandy]);
+    });
+  }
+  AssetImage _pigCharacter = AssetImage(PigCode.type0);
+  _handleSelectedPig(int typePig){
+    setState(() {
+      _pigCharacter = AssetImage(PigCode.listPig()[typePig]);
+    });
   }
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      initialIndex: 1,
-      length: 2,
-      child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          elevation: 0,
-          child: Image.asset('assets/images/icon/ic_back.png'),
-          backgroundColor: Colors.transparent,
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-        body: ContainerFlexible(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/background/background.png'),
-                fit: BoxFit.fill,
-              )
-          ),
-          child: Stack(
-            children: [
-              Container(
+    return ContainerFlexible(
+      decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/images/background/background.png'), fit: BoxFit.fill,)),
+      child: Stack(
+        children: [
+          Align(
+              alignment: AlignmentDirectional.topCenter,
+              child: Container(
+                  margin: EdgeInsets.only(top: 150),
+                  child: SmoothPageIndicator(controller: controller, count: 2,effect: ScrollingDotsEffect(),))),
+          PageView(
+            scrollDirection: Axis.horizontal,
+            controller: controller,
+            children:  <Widget>[
+              Stack(
+                children: [
+                  Positioned(
+                    top: 40, left: 30, right: 20,
+                    child: Image(width: 100,height: 100,image:_pigCharacter),
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: buttonUI(width: 60, height: 60,
+                        fontSize: 48,
+                        src: 'assets/images/icon/ic_arrow_right.png',
+                        margin: EdgeInsets.only(top: 100, right: 40),
+                        onTap: (){controller.nextPage(duration: Duration(milliseconds: 500), curve: Curves.decelerate,);}
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 200),
+                    child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 150,
+                            childAspectRatio: 3 / 2,
+                            crossAxisSpacing: 30,
+                            mainAxisSpacing: 50),
+                        itemCount: PigCode.listPig().length,
+                        itemBuilder: (BuildContext ctx, index) {
+                          return GestureDetector(
+                            onTap: (){
+                              _handleSelectedPig(index);
+                            },
+                            child: Container(
+                                width: 100, height: 100,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(image: AssetImage(PigCode.listPig()[index]))
+                                )
+                            ),
+                          );
+                        }),
+                  ),
+                ],
               ),
-              const TabBarView(
-                  children: <Widget>[
-                    Center(
-                      child: Text("It's cloudy here"),
+              Stack(
+                children: [
+                  Positioned(
+                    top: 40, left: 30, right: 20,
+                    child: Image(width: 100,height: 100,image:_candyCharacter),
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: buttonUI(width: 60, height: 60,
+                        fontSize: 48,
+                        src: 'assets/images/icon/ic_arrow_left.png',
+                        margin: EdgeInsets.only(top: 100, right: 40),
+                        onTap: (){controller.previousPage(duration: Duration(milliseconds: 500), curve: Curves.decelerate,);}
                     ),
-                    Center(
-                      child: Text("It's rainy here"),
-                    ),
-                  ],
-                )
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 200),
+                    child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 110,
+                            childAspectRatio: 3/ 2,
+                            crossAxisSpacing: 30,
+                            mainAxisSpacing: 50),
+
+                        itemCount: CandyCode.listCandy().length,
+                        itemBuilder: (BuildContext ctx, index) {
+                          return GestureDetector(
+                            onTap: (){
+                              _handleSelectedCandy(index);
+                            },
+                            child: Container(
+                                width: 100, height: 100,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(image: AssetImage(CandyCode.listCandy()[index]))
+                                )
+                            ),
+                          );
+                        }),
+                  ),
+                ],
+              ),
             ],
           ),
-        ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: buttonUI(
+              width: 80,
+              height: 80,
+              margin: EdgeInsets.only(bottom: 40,left: 20),
+              src: 'assets/images/icon/ic_back.png',
+              onTap: (){
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

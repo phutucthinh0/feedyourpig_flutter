@@ -1,4 +1,5 @@
 import 'package:feedyourpig_flutter/screens/home_screen.dart';
+import 'package:feedyourpig_flutter/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Nolan'
       ),
-      home: HomeScreen(),
+      home: SplashScreen(),
     );
   }
 }

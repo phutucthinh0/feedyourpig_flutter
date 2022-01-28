@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 
-class ButtonUI extends StatefulWidget {
+class buttonUI extends StatefulWidget {
   final double width;
   final double height;
   final String text;
@@ -11,13 +11,14 @@ class ButtonUI extends StatefulWidget {
   final Color textColor;
   final EdgeInsets margin;
   final onTap;
+  final String src;
 
-  ButtonUI({this.width = double.infinity,this.fontFamily = "Nolan" , this.height = double.infinity,this.text="", this.fontSize=28, this.fontWeight = FontWeight.normal, this.textColor = Colors.white, required this.onTap, this.margin= EdgeInsets.zero, String? src, });
+  buttonUI({this.width = double.infinity,this.fontFamily = "Nolan" , this.height = double.infinity,this.text="", this.fontSize=28, this.fontWeight = FontWeight.normal, this.textColor = Colors.white, required this.onTap, this.margin= EdgeInsets.zero, this.src='', });
   @override
-  _ButtonUI createState() => _ButtonUI();
+  _buttonUI createState() => _buttonUI();
 }
 
-class _ButtonUI extends State<ButtonUI> {
+class _buttonUI extends State<buttonUI> {
   bool enable = false;
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class _ButtonUI extends State<ButtonUI> {
           height: widget.height,
           margin: widget.margin,
           decoration: BoxDecoration(
-            image: DecorationImage(image: AssetImage('assets/images/button/btnstylenext.png'),fit: BoxFit.fill),
+            image: DecorationImage(image: AssetImage(widget.src),fit: BoxFit.fill),
           ),
           child: Center(child: Text(widget.text,style: TextStyle(fontSize: widget.fontSize,fontWeight: widget.fontWeight,color: widget.textColor,fontFamily: 'Nolan'))),
         ),
