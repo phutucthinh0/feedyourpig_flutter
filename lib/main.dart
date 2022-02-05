@@ -1,4 +1,5 @@
 import 'package:feedyourpig_flutter/screens/home_screen.dart';
+import 'package:feedyourpig_flutter/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,9 +15,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        backgroundColor: Colors.black,
         primarySwatch: Colors.blue,
+        fontFamily: 'Nolan'
       ),
-      home: HomeScreen(),
+      home: SplashScreen(),
     );
   }
 }
