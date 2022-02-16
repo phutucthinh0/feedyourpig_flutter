@@ -12,8 +12,8 @@ class ContainerFlexible extends StatelessWidget {
     return Center(
       child: Container(
         alignment: Alignment.center,
-        width: SystemConstant.width(),
-        height: SystemConstant.height(),
+        width: SystemConstant.width,
+        height: SystemConstant.height,
         decoration: decoration,
         child: child,
       ),
