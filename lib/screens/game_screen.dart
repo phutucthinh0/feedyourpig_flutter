@@ -1,33 +1,38 @@
 
 import 'dart:async';
+import 'package:feedyourpig_flutter/controllers/game_controller.dart';
 import 'package:feedyourpig_flutter/helper/Assets_helper.dart';
 import 'package:feedyourpig_flutter/helper/button_ui.dart';
+import 'package:feedyourpig_flutter/helper/game_helper.dart';
 import 'package:feedyourpig_flutter/helper/text_ui.dart';
+import 'package:feedyourpig_flutter/models/maze_model.dart';
 import 'package:feedyourpig_flutter/screens/gallery_screen.dart';
 import 'package:feedyourpig_flutter/screens/play_screen.dart';
 import 'package:feedyourpig_flutter/widgets/container_flexible.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-enum Screen{
-  ChooseMaze,ChooseMap,Play
-}
+
+import '../enum/screen_enum.dart';
+
 class GameScreen extends StatefulWidget {
   @override
   _GameScreenState createState() => _GameScreenState();
 }
 class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateMixin {
-  var screen = Screen.ChooseMaze;
+  var _gameHelper = GameHelper();
+  final GameController _gameController = Get.put(GameController());
+  late List<MazeModel> _listMaze;
   var willScreen = Screen.ChooseMaze;
-  late Map<String,dynamic> jsonMain;
   bool _animBlack = false;
   late Image background_screen = Image(width: double.infinity, height: double.infinity, image: AssetImage(AssetsHelper.listBackgroundAddress[0]), fit: BoxFit.cover);
-  int choose_maze_id = 0;
-  int choose_map_id = 0;
+  // int choose_maze_id = 0;
+  // int choose_map_id = 0;
   final _controller = PageController(viewportFraction: 0.7);
   double currentPage = 0.0;
   _handleSelectedMaze(int mazeId){
-    choose_maze_id = mazeId;
+    // choose_maze_id = mazeId;
+    _gameController.maze(_listMaze[mazeId]);
     background_screen = Image(width: double.infinity, height: double.infinity, image: AssetImage(AssetsHelper.listBackgroundAddress[mazeId]), fit: BoxFit.cover);
     willScreen = Screen.ChooseMap;
     _handleBlackScreen();
@@ -36,8 +41,9 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
     willScreen = Screen.ChooseMaze;
     _handleBlackScreen();
   }
-  _handleSelectedMap(int mapId){
-    choose_map_id = mapId;
+  _handleSelectedMap(int mapId)async{
+    // choose_map_id = mapId;
+    _gameController.map(await _gameHelper.getMap(_gameController.maze.value, mapId));
     willScreen = Screen.Play;
     _handleBlackScreen();
   }
@@ -54,16 +60,20 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
+    initStateAsync();
+  }
+  initStateAsync() async{
+    _listMaze = await _gameHelper.getListMaze();
   }
   @override
   Widget build(BuildContext context) {
     return WillPopScope (
         onWillPop: () async {
-          if(screen == Screen.ChooseMap){
+          if(_gameController.screen.value == Screen.ChooseMap){
             _handleBackToMaze();
             return false;
           }
-          if(screen == Screen.Play){
+          if(_gameController.screen.value == Screen.Play){
             _handleBackToMap();
             return false;
           }
@@ -75,7 +85,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
             decoration: BoxDecoration(image: DecorationImage(image: AssetImage("assets/images/background/background.png"), fit: BoxFit.cover)),
             child: Stack(
               children: [
-                _buildScreen(),
+                Obx(()=> _buildScreen()),
                 IgnorePointer(
                   ignoring: true,
                   child: AnimatedOpacity(
@@ -84,9 +94,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
                     onEnd: () {
                       if (_animBlack) {
                         Future.delayed(Duration(milliseconds: 50), () {
-                          setState(() {
-                            screen = willScreen;
-                          });
+                          _gameController.screen(willScreen);
                           Future.delayed(Duration(milliseconds: 50), () {
                             setState(() {
                               _animBlack = false;
@@ -109,7 +117,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
     );
   }
   Widget _buildScreen(){
-    switch(screen){
+    switch(_gameController.screen.value){
       case Screen.ChooseMaze:{
         return Stack(
             children: [
@@ -250,7 +258,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
           ],
         );
       }
-      default: return Scaffold();
+      default: return Container();
     }
   }
   @override
