@@ -1,5 +1,6 @@
 enum PigState {
   stand,
+  prepare,
   eat,
   sad
 }

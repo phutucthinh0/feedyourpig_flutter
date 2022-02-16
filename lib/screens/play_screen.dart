@@ -15,6 +15,12 @@ class _PlayScreenState extends State<PlayScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ContainerFlexible(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background/bg_ice.png"),
+            fit: BoxFit.cover
+          )
+        ),
         child: Stack(
           children: [
             GameWidget(
