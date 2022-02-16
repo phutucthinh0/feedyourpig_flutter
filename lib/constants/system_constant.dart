@@ -45,6 +45,6 @@ class SystemConstant {
     return 5;
   }
   static double _spaceHeight(){
-    return _height() - _unitSize()*19 -10;
+    return _height() - _unitSize()*19 -20;
   }
 }

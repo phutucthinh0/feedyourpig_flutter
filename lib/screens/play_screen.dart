@@ -13,21 +13,19 @@ class _PlayScreenState extends State<PlayScreen> {
   final mainGame = MainGame();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ContainerFlexible(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/background/bg_ice.png"),
-            fit: BoxFit.cover
-          )
-        ),
-        child: Stack(
-          children: [
-            GameWidget(
-              game: mainGame,
-            ),
-          ],
-        ),
+    return ContainerFlexible(
+      // decoration: BoxDecoration(
+      //   image: DecorationImage(
+      //     image: AssetImage("assets/images/background/bg_ice.png"),
+      //     fit: BoxFit.cover
+      //   )
+      // ),
+      child: Stack(
+        children: [
+          GameWidget(
+            game: mainGame,
+          ),
+        ],
       ),
     );
   }
