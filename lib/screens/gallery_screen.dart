@@ -9,12 +9,14 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 
 class GalleryScreen extends StatefulWidget {
+  final int index;
+  const GalleryScreen({Key? key, this.index = 0}) : super(key: key);
   @override
   _GalleryScreenState createState() => _GalleryScreenState();
 }
 
 class _GalleryScreenState extends State<GalleryScreen> {
-  final PageController controller = PageController(initialPage: 0);
+  late PageController controller;
   AssetImage _candyCharacter = AssetImage(CandyCode.type0);
   _handleSelectedCandy(int typeCandy){
     setState(() {
@@ -28,6 +30,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     });
   }
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller = PageController(initialPage: widget.index);
+  }
+  @override
   Widget build(BuildContext context) {
     return ContainerFlexible(
       decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/images/background/background.png'), fit: BoxFit.fill,)),
@@ -37,7 +45,17 @@ class _GalleryScreenState extends State<GalleryScreen> {
               alignment: AlignmentDirectional.topCenter,
               child: Container(
                   margin: EdgeInsets.only(top: 150),
-                  child: SmoothPageIndicator(controller: controller, count: 2,effect: ScrollingDotsEffect(),))),
+                  child: SmoothPageIndicator(
+                    controller: controller,
+                    count: 2,
+                    effect: ScrollingDotsEffect(
+                      maxVisibleDots: 5,
+                      dotColor: Colors.white,
+                      activeDotColor: Colors.red,
+
+                    ),
+                  )
+              )),
           PageView(
             scrollDirection: Axis.horizontal,
             controller: controller,
@@ -50,7 +68,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   ),
                   Align(
                     alignment: Alignment.topRight,
-                    child: buttonUI(width: 60, height: 60,
+                    child: buttonUI(width: 40, height: 40,
                         fontSize: 48,
                         src: 'assets/images/icon/ic_arrow_right.png',
                         margin: EdgeInsets.only(top: 100, right: 40),
@@ -90,7 +108,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   ),
                   Align(
                     alignment: Alignment.topRight,
-                    child: buttonUI(width: 60, height: 60,
+                    child: buttonUI(width: 40, height: 40,
                         fontSize: 48,
                         src: 'assets/images/icon/ic_arrow_left.png',
                         margin: EdgeInsets.only(top: 100, right: 40),

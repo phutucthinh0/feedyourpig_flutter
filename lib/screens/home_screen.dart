@@ -22,6 +22,11 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     // full screen background
     UIUtil.fullscreen();
+    //Coach mark
+  }
+  @override
+  void dispose() {
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {

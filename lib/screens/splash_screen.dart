@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:feedyourpig_flutter/helper/text_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState(){
     super.initState();
-    Timer(Duration(seconds: 5), ()=>Get.off(()=>HomeScreen()),);
+    Timer(Duration(seconds: 4), ()=>Get.off(()=>HomeScreen()),);
   }
   Widget build(BuildContext context) {
     return Scaffold(

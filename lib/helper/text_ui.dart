@@ -12,6 +12,7 @@ class TextUI extends StatelessWidget {
 
   TextUI(
       this.text, {
+        Key? key,
         this.fontSize = 18,
         this.fontWeight = FontWeight.normal,
         this.color = Colors.black,
@@ -24,25 +25,25 @@ class TextUI extends StatelessWidget {
   Widget build(BuildContext context) {
     return (margin == null)
         ? Text(text,
-        style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-          color: color,
-          height: height,
-        ),
-        textAlign: textAlign)
+            style: TextStyle(
+              fontSize: fontSize,
+              fontWeight: fontWeight,
+              color: color,
+              height: height,
+            ),
+            textAlign: textAlign)
         : Container(
-      margin: margin,
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-          color: color,
-          height: height,
-        ),
-        textAlign: textAlign,
-      ),
-    );
+            margin: margin,
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: fontWeight,
+                color: color,
+                height: height,
+              ),
+              textAlign: textAlign,
+            ),
+          );
   }
 }
