@@ -4,6 +4,8 @@ import 'package:feedyourpig_flutter/constants/system_constant.dart';
 import 'package:feedyourpig_flutter/controllers/game_controller.dart';
 import 'package:feedyourpig_flutter/enum/pig_enum.dart';
 import 'package:feedyourpig_flutter/flame/components/net.dart';
+import 'package:feedyourpig_flutter/flame/components/swipe_bottom.dart';
+import 'package:feedyourpig_flutter/flame/components/swipe_top.dart';
 import 'package:feedyourpig_flutter/flame/components/thorn.dart';
 import 'package:feedyourpig_flutter/models/map_model.dart';
 import 'package:flame/components.dart';
@@ -14,8 +16,13 @@ import 'package:get/get.dart';
 
 import '../constants/box_constant.dart';
 import 'components/candy.dart';
+import 'components/hidden_bomb.dart';
 import 'components/iron.dart';
 import 'components/pig.dart';
+import 'components/swipe_end.dart';
+import 'components/swipe_start.dart';
+import 'components/tnt.dart';
+import 'components/wood.dart';
 
 class MainGame extends FlameGame with TapDetector{
   late SpriteAnimationGroupComponent pig;
@@ -57,6 +64,34 @@ class MainGame extends FlameGame with TapDetector{
           }
           case Box.thorn:{
             _listBox.add(Thorn(i,j));
+            break;
+          }
+          case Box.wood:{
+            _listBox.add(Wood(i,j));
+            break;
+          }
+          case Box.hiddenBomb:{
+            _listBox.add(HiddenBomb(i,j));
+            break;
+          }
+          case Box.bottom:{
+            _listBox.add(SwipeBottom(i,j));
+            break;
+          }
+          case Box.end:{
+            _listBox.add(SwipeEnd(i,j));
+            break;
+          }
+          case Box.start:{
+            _listBox.add(SwipeStart(i,j));
+            break;
+          }
+          case Box.top:{
+            _listBox.add(SwipeTop(i,j));
+            break;
+          }
+          case Box.tnt:{
+            _listBox.add(Tnt(i,j));
             break;
           }
         }
