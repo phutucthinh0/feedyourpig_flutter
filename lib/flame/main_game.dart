@@ -7,6 +7,7 @@ import 'package:feedyourpig_flutter/flame/components/net.dart';
 import 'package:feedyourpig_flutter/flame/components/thorn.dart';
 import 'package:feedyourpig_flutter/models/map_model.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
@@ -16,21 +17,30 @@ import '../constants/box_constant.dart';
 import 'components/candy.dart';
 import 'components/iron.dart';
 import 'components/pig.dart';
+import 'components/star.dart';
 
-class MainGame extends FlameGame with TapDetector{
+class MainGame extends FlameGame with TapDetector, VerticalDragDetector, HorizontalDragDetector{
   late SpriteAnimationGroupComponent pig;
+  List<int> pig_p = [0,0];
   late SpriteComponent candy;
+  List<int> candy_p = [0,0];
+  List<int> candy_p_old = [0,0];
   late Component net;
   final GameController _gameController = Get.find();
+  late MapModel _map;
+  bool doingAnimationCandy = false;
+  bool isWin = false;
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    final MapModel _map = _gameController.map.value;
+    _map = _gameController.map.value;
     List<Component> _listBox= [];
     net = Net();
     add(net);
     pig = Pig();
     pig.size = Vector2(SystemConstant.unitSize*2, SystemConstant.unitSize*2);
+    pig_p[0] = _map.prepare![0];
+    pig_p[1] = _map.prepare![1];
     pig.position = Vector2(
         SystemConstant.spaceWidth + SystemConstant.unitSize * (_map.prepare![0]-0.5),
         SystemConstant.spaceHeight + SystemConstant.unitSize * (_map.prepare![1] - 0.5)
@@ -39,10 +49,15 @@ class MainGame extends FlameGame with TapDetector{
     add(pig);
     candy = Candy();
     candy.size = Vector2(SystemConstant.unitSize, SystemConstant.unitSize);
-    candy.position = Vector2(
-        SystemConstant.spaceWidth + SystemConstant.unitSize * _map.prepare![2],
-        SystemConstant.spaceHeight + SystemConstant.unitSize * _map.prepare![3]
-    );
+    candy.position = getPositionByMap(_map.prepare![2], _map.prepare![3]);
+    candy_p[0] = _map.prepare![2];
+    candy_p[1] = _map.prepare![3];
+    candy_p_old[0] = _map.prepare![2];
+    candy_p_old[1] = _map.prepare![3];
+    // candy.position = Vector2(
+    //     SystemConstant.spaceWidth + SystemConstant.unitSize * _map.prepare![2],
+    //     SystemConstant.spaceHeight + SystemConstant.unitSize * _map.prepare![3]
+    // );
     candy.changePriorityWithoutResorting(2);
     add(candy);
     
@@ -51,6 +66,10 @@ class MainGame extends FlameGame with TapDetector{
       // ignore: curly_braces_in_flow_control_structures
       for(int j=0; j<=18;j++){
         switch (_map.game![i][j]){
+          case Box.star: {
+            _listBox.add(Star(i,j));
+            break;
+          }
           case Box.iron:{
             _listBox.add(Iron(i,j));
             break;
@@ -76,8 +95,183 @@ class MainGame extends FlameGame with TapDetector{
   @override
   void onTapUp(_) {
     pig.current = PigState.stand;
-  } 
+  }
 
+  @override
+  void onVerticalDragEnd(DragEndInfo info) {
+    super.onVerticalDragEnd(info);
+    if(info.velocity.y < 0){
+      onSwipeTop();
+    }
+    if(info.velocity.y > 0){
+      onSwipeBottom();
+    }
+  }
+
+  @override
+  void onHorizontalDragEnd(DragEndInfo info) {
+    // TODO: implement onHorizontalDragEnd
+    super.onHorizontalDragEnd(info);
+    if(info.velocity.x < 0){
+      onSwipeLeft();
+    }
+    if(info.velocity.x > 0){
+      onSwipeRight();
+    }
+  }
+
+  void onSwipeTop(){
+    print('--------Swipe Top');
+    if(doingAnimationCandy)return;
+    for (int i = candy_p[1]; i >= 0; i--) {
+      if (checkCandy(candy_p[0], i, 1)) break;
+      if (i == 0) {
+        onLose(-1);
+        return;
+      }
+    }
+    animationCandy();
+  }
+  void onSwipeRight(){
+    print('--------Swipe Right');
+    if(doingAnimationCandy)return;
+    for (int i = candy_p[0]; i <= 10; i++) {
+      if (checkCandy(i, candy_p[1], 2)) break;
+      if (i == 10) {
+        onLose(-2);
+        return;
+      }
+    }
+    animationCandy();
+  }
+  void onSwipeBottom(){
+    print('--------Swipe Bottom');
+    if(doingAnimationCandy)return;
+    for(int i=candy_p[1]; i<=18; i++){
+      if(checkCandy(candy_p[0],i,3)) break;
+      if(i==18){
+        onLose(-3);
+        return;
+      }
+    }
+    animationCandy();
+  }
+  void onSwipeLeft(){
+    print('--------Swipe Left');
+    if(doingAnimationCandy)return;
+    for (int i = candy_p[0]; i >= 0; i--) {
+      if (checkCandy(i, candy_p[1], 4)) break;
+      if (i == 0) {
+        onLose(-4);
+        return;
+      }
+    }
+    animationCandy();
+  }
+  bool checkCandy(int candyX, int candyY, int swipeDirection){
+
+    if (_map.game![candyX][candyY] == Box.iron) {
+      switch (swipeDirection) {
+        case 1: {
+          candy_p[1] = candyY + 1;
+          break;
+        }
+        case 2: {
+          candy_p[0] = candyX - 1;
+          break;
+        }
+        case 3: {
+          candy_p[1] = candyY - 1;
+          break;
+        }
+        case 4: {
+          candy_p[0] = candyX + 1;
+          break;
+        }
+      }
+      // checkPrepareWin();
+      return true;
+    }
+    // Pig
+    if (candyX == pig_p[0] && candyY == pig_p[1]) {
+      isWin = true;
+      candy_p[0] = candyX;
+      candy_p[1] = candyY;
+      return true;
+    }
+    return false;
+  }
+  void animationCandy()async{
+    doingAnimationCandy = true;
+    double _duration = 0.0;
+    if(candy_p[0] != candy_p_old [0]){
+      _duration = (candy_p[0] - candy_p_old[0]).abs() * 0.02;
+    }else
+    if(candy_p[1] != candy_p_old [1]){
+      _duration = (candy_p[1] - candy_p_old[1]).abs() * 0.02;
+    }
+    await candy.add(MoveEffect.to(
+        getPositionByMap(candy_p[0], candy_p[1]),
+        EffectController(
+          duration: _duration,
+        )
+    ));
+    candy_p_old[0] = candy_p[0];
+    candy_p_old[1] = candy_p[1];
+    // Callback when effect completed
+    Future.delayed(Duration(milliseconds: (_duration*1000).toInt()),(){
+      doingAnimationCandy = false;
+      checkAnimationCandyEnd();
+      print('On end');
+    });
+  }
+  void checkAnimationCandyEnd(){
+    if(isWin){
+      candy.add(RemoveEffect());
+      pig.current = PigState.eat;
+    }
+  }
+  void onLose(int type){
+    double _duration = 0;
+    switch (type){
+      case -2:{
+        _duration = (12 - candy_p_old[0]).abs() * 0.02;
+        candy.add(MoveEffect.to(
+            getPositionByMap(12, candy_p[1]),
+            EffectController(
+              duration: _duration,
+            )
+        ));
+        break;
+      }
+      case -3:{
+        _duration = (20 - candy_p_old[1]).abs() * 0.02;
+        candy.add(MoveEffect.to(
+            getPositionByMap(candy_p[0], 20),
+            EffectController(
+              duration: _duration,
+            )
+        ));
+        break;
+      }
+      case -4:{
+        _duration = (-2 - candy_p_old[0]).abs() * 0.02;
+        candy.add(MoveEffect.to(
+            getPositionByMap(-2, candy_p[1]),
+            EffectController(
+              duration: _duration,
+            )
+        ));
+        break;
+      }
+    }
+  }
+  Vector2 getPositionByMap(int dx, int dy){
+    return Vector2(
+        SystemConstant.spaceWidth + SystemConstant.unitSize * dx,
+        SystemConstant.spaceHeight + SystemConstant.unitSize * dy
+    );
+  }
   @override
   Color backgroundColor() => Colors.transparent;
 }

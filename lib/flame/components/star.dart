@@ -9,7 +9,7 @@ class Star extends SpriteComponent{
   @override
   Future<void> onLoad() async{
     await super.onLoad();
-    sprite = await Sprite.load('box/ironbox.png');
+    sprite = await Sprite.load('icon/ic_star.png');
     size = Vector2.all(SystemConstant.unitSize);
     position = Vector2(SystemConstant.spaceWidth + SystemConstant.unitSize*dx, SystemConstant.spaceHeight + SystemConstant.unitSize*dy);
   }

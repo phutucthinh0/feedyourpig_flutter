@@ -18,7 +18,7 @@ class Pig extends SpriteAnimationGroupComponent {
     final eat_sprites = [6,7,8,9].map((i) => Sprite.load('pigs/pig0_eat${i}.png'));
     final eat_animation = SpriteAnimation.spriteList(
         await Future.wait(eat_sprites),
-        stepTime: 0.05
+        stepTime: 0.08
     );
     final sad_sprites = [1,2,3,4,5,6].map((i) => Sprite.load('pigs/pig0_sad${i}.png'));
     final sad_animation = SpriteAnimation.spriteList(

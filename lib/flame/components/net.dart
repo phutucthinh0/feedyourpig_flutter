@@ -8,7 +8,11 @@ class Net extends Component {
       ..color = Color(0x33000000)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
-  // Net() : super(priority: 0) {
+
+  @override
+  void onMount() {
+
+  } // Net() : super(priority: 0) {
   //
   // }
 
