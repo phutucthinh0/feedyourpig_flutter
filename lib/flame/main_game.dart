@@ -30,6 +30,7 @@ class MainGame extends FlameGame with TapDetector, VerticalDragDetector, Horizon
   late SpriteAnimationGroupComponent pig;
   List<int> pig_p = [0,0];
   late SpriteComponent candy;
+  List<List<Component?>> _listBox= List.generate(11, (index) => List.generate(19, (index) => null));
   List<int> candy_p = [0,0];
   List<int> candy_p_old = [0,0];
   late Component net;
@@ -37,11 +38,12 @@ class MainGame extends FlameGame with TapDetector, VerticalDragDetector, Horizon
   late MapModel _map;
   bool doingAnimationCandy = false;
   bool isWin = false;
+  //initialize box
+  List<int> box_star = [-1,-1,-1];
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     _map = _gameController.map.value;
-    List<Component> _listBox= [];
     net = Net();
     add(net);
     pig = Pig();
@@ -61,10 +63,6 @@ class MainGame extends FlameGame with TapDetector, VerticalDragDetector, Horizon
     candy_p[1] = _map.prepare![3];
     candy_p_old[0] = _map.prepare![2];
     candy_p_old[1] = _map.prepare![3];
-    // candy.position = Vector2(
-    //     SystemConstant.spaceWidth + SystemConstant.unitSize * _map.prepare![2],
-    //     SystemConstant.spaceHeight + SystemConstant.unitSize * _map.prepare![3]
-    // );
     candy.changePriorityWithoutResorting(2);
     add(candy);
     
@@ -74,48 +72,54 @@ class MainGame extends FlameGame with TapDetector, VerticalDragDetector, Horizon
       for(int j=0; j<=18;j++){
         switch (_map.game![i][j]){
           case Box.star: {
-            _listBox.add(Star(i,j));
+            _listBox[i][j] = Star(i, j);
             break;
           }
           case Box.iron:{
-            _listBox.add(Iron(i,j));
+            _listBox[i][j] = Iron(i,j);
             break;
           }
-          case Box.thorn:{
-            _listBox.add(Thorn(i,j));
-            break;
-          }
-          case Box.wood:{
-            _listBox.add(Wood(i,j));
-            break;
-          }
-          case Box.hiddenBomb:{
-            _listBox.add(HiddenBomb(i,j));
-            break;
-          }
-          case Box.bottom:{
-            _listBox.add(SwipeBottom(i,j));
-            break;
-          }
-          case Box.end:{
-            _listBox.add(SwipeEnd(i,j));
-            break;
-          }
-          case Box.start:{
-            _listBox.add(SwipeStart(i,j));
-            break;
-          }
-          case Box.top:{
-            _listBox.add(SwipeTop(i,j));
-            break;
-          }
-          case Box.tnt:{
-            _listBox.add(Tnt(i,j));
-            break;
-          }
+          // case Box.thorn:{
+          //   _listBox.add(Thorn(i,j));
+          //   break;
+          // }
+          // case Box.wood:{
+          //   _listBox.add(Wood(i,j));
+          //   break;
+          // }
+          // case Box.hiddenBomb:{
+          //   _listBox.add(HiddenBomb(i,j));
+          //   break;
+          // }
+          // case Box.bottom:{
+          //   _listBox.add(SwipeBottom(i,j));
+          //   break;
+          // }
+          // case Box.end:{
+          //   _listBox.add(SwipeEnd(i,j));
+          //   break;
+          // }
+          // case Box.start:{
+          //   _listBox.add(SwipeStart(i,j));
+          //   break;
+          // }
+          // case Box.top:{
+          //   _listBox.add(SwipeTop(i,j));
+          //   break;
+          // }
+          // case Box.tnt:{
+          //   _listBox.add(Tnt(i,j));
+          //   break;
+          // }
         }
       }
-    addAll(_listBox);
+    for(int i=0; i<=10; i++)
+      // ignore: curly_braces_in_flow_control_structures
+      for(int j=0; j<=18;j++){
+        if(_listBox[i][j] != null){
+          add(_listBox[i][j]!);
+        }
+      }
   }
   @override
   void onTapDown(_) {
@@ -165,6 +169,7 @@ class MainGame extends FlameGame with TapDetector, VerticalDragDetector, Horizon
         return;
       }
     }
+    print('--------------aaaaaaaa-');
     animationCandy();
   }
   void onSwipeRight(){
@@ -204,7 +209,17 @@ class MainGame extends FlameGame with TapDetector, VerticalDragDetector, Horizon
     animationCandy();
   }
   bool checkCandy(int candyX, int candyY, int swipeDirection){
-
+    if (_map.game![candyX][candyY] == Box.star) {
+      _map.game![candyX][candyY] = 0;
+      box_star[0] = candyX;
+      box_star[1] = candyY;
+      box_star[2] = swipeDirection;
+      candy_p[0] = candyX;
+      candy_p[1] = candyY;
+      // star_count++;
+      // gameInterface.lightStar(star_count);
+      return true;
+    }
     if (_map.game![candyX][candyY] == Box.iron) {
       switch (swipeDirection) {
         case 1: {
@@ -261,6 +276,30 @@ class MainGame extends FlameGame with TapDetector, VerticalDragDetector, Horizon
     });
   }
   void checkAnimationCandyEnd(){
+    // Box star
+    if(box_star[0]!= -1){
+      _listBox[box_star[0]][box_star[1]]!.add(RemoveEffect());
+      _gameController.addLightStar();
+      box_star[0]= -1;
+      switch (box_star[2]){
+        case 1:{
+          onSwipeTop();
+          break;
+        }
+        case 2:{
+          onSwipeRight();
+          break;
+        }
+        case 3:{
+          onSwipeBottom();
+          break;
+        }
+        case 4:{
+          onSwipeLeft();
+          break;
+        }
+      }
+    }
     if(isWin){
       candy.add(RemoveEffect());
       pig.current = PigState.eat;

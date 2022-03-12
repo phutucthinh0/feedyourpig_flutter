@@ -9,4 +9,7 @@ class GameController extends GetxController{
   var map = MapModel(game: null, help: null, prepare: null).obs;
   var screen = (Screen.ChooseMaze).obs;
   var lightStar = 0.obs;
+  void addLightStar(){
+    lightStar(lightStar.value+1);
+  }
 }
