@@ -16,6 +16,8 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../enum/screen_enum.dart';
 
 class GameScreen extends StatefulWidget {
+  final int index;
+  const GameScreen({Key? key, this.index = 0}) : super(key: key);
   @override
   _GameScreenState createState() => _GameScreenState();
 }
@@ -26,15 +28,17 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
   var willScreen = Screen.ChooseMaze;
   bool _animBlack = false;
   late Image background_screen = Image(width: double.infinity, height: double.infinity, image: AssetImage(AssetsHelper.listBackgroundAddress[0]), fit: BoxFit.cover);
-  // int choose_maze_id = 0;
-  // int choose_map_id = 0;
-  final _controller = PageController(viewportFraction: 0.7);
+  int choose_maze_id = 0;
+  int choose_map_id = 0;
+  // final controller = PageController(viewportFraction: 0.7);
+  late PageController controller;
   double currentPage = 0.0;
   _handleSelectedMaze(int mazeId){
-    // choose_maze_id = mazeId;
+    choose_maze_id = mazeId;
     _gameController.maze(_listMaze[mazeId]);
     background_screen = Image(width: double.infinity, height: double.infinity, image: AssetImage(AssetsHelper.listBackgroundAddress[mazeId]), fit: BoxFit.cover);
     willScreen = Screen.ChooseMap;
+    print(mazeId);
     _handleBlackScreen();
   }
   _handleBackToMaze(){
@@ -42,7 +46,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
     _handleBlackScreen();
   }
   _handleSelectedMap(int mapId)async{
-    // choose_map_id = mapId;
+    choose_map_id = mapId;
     _gameController.map(await _gameHelper.getMap(_gameController.maze.value, mapId));
     willScreen = Screen.Play;
     _handleBlackScreen();
@@ -50,9 +54,11 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
   _handleBackToMap(){
     willScreen = Screen.ChooseMap;
     _handleBlackScreen();
+
   }
   _handleBlackScreen([int duration = 400]){
     setState(() {
+      // print('$index')
       _animBlack = true;
     });
   }
@@ -61,6 +67,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     initStateAsync();
+    controller = PageController(initialPage: widget.index, viewportFraction: 0.7);
   }
   initStateAsync() async{
     _listMaze = await _gameHelper.getListMaze();
@@ -126,7 +133,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
               PageView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: AssetsHelper.listMazeIcon.length,
-                  controller: _controller,
+                  controller: controller,
                   itemBuilder: (context,index)=>
                       GestureDetector(
                         onTap: (){
@@ -150,7 +157,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
                 child: Container(
                     margin: EdgeInsets.only(bottom: 200),
                     child: SmoothPageIndicator(
-                      controller: _controller,
+                      controller: controller,
                       count: 10,
                       effect: ScrollingDotsEffect(
                         maxVisibleDots: 5,
@@ -164,8 +171,8 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
               Align(
                 alignment: Alignment.bottomLeft,
                 child: buttonUI(
-                  width: 80,
-                  height: 80,
+                  width: 70,
+                  height: 70,
                   margin: EdgeInsets.only(bottom: 60,left: 25),
                   src: 'assets/images/icon/ic_back.png',
                   onTap: (){
@@ -179,15 +186,15 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                   buttonUI(
-                    width: 60,
-                    height: 60,
+                    width: 55,
+                    height: 55,
                     src: 'assets/images/icon/ic_change_candy.png',
                     onTap: ()=>Get.to(()=>GalleryScreen(index: 1 ,) ),
                   ),
 
                   buttonUI(
-                    width: 60,
-                    height: 60,
+                    width: 55,
+                    height: 55,
                     src: 'assets/images/icon/ic_change_pig.png',
                     onTap: ()=>Get.to(()=>GalleryScreen() ),
                   ),
@@ -238,15 +245,16 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
             Align(
               alignment: Alignment.bottomLeft,
               child: buttonUI(
-                width: 80,
-                height: 80,
+                width: 60,
+                height: 60,
                 margin: EdgeInsets.only(bottom: 60,left: 25),
                 src: 'assets/images/icon/ic_back.png',
                 onTap: (){
                   _handleBackToMaze();
                 },
+
               ),
-            )
+            ),
           ],
         );
       }

@@ -146,8 +146,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
           Align(
             alignment: Alignment.bottomLeft,
             child: buttonUI(
-              width: 80,
-              height: 80,
+              width: 70,
+              height: 70,
               margin: EdgeInsets.only(bottom: 40,left: 20),
               src: 'assets/images/icon/ic_back.png',
               onTap: (){

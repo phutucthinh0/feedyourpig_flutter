@@ -16,6 +16,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _animBlack = false;
+  _handleBlackScreen([int duration = 400]){
+    setState(() {
+      _animBlack = true;
+    });
+  }
   @override
   void initState() {
     // TODO: implement initState
@@ -49,7 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 48,
                   src: 'assets/images/button/btnstylenext.png',
                   margin: EdgeInsets.only(bottom: 40),
-                  onTap: ()=>Get.to(()=>GameScreen()),
+                  onTap: ()=>Get.to(()=>GameScreen(),transition: Transition.rightToLeftWithFade , duration: Duration(milliseconds: 500)) ,
+
                 ),
               ),
               Align(
@@ -58,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 36,
                   src: 'assets/images/button/btnstylenext.png',
                   margin: EdgeInsets.only(top: 140),
-                  onTap:()=>Get.to(()=>GalleryScreen()),
+                  onTap:()=>Get.to(()=>GalleryScreen(),transition: Transition.rightToLeftWithFade , duration: Duration(milliseconds: 500)) ,
                 ),
               ),
               Align(
