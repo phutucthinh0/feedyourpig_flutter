@@ -19,8 +19,6 @@ class _assetsHelper {
   Image backgroundGameScreen =   Image(width: double.infinity, height: double.infinity, image: AssetImage('assets/images/background/background.png'), fit: BoxFit.cover);
   List<String> listMazeName = ["Iron Maze", "Wood Maze", "Ice Maze", "TNT Maze", "Swipe Maze", "Liquid Cement Maze", "Space Maze", "Thorn Cement Maze", "Hidden Bomb Maze", "Mixture Maze"];
   List<String> listBackgroundAddress = ["assets/images/background/bg_iron.png", "assets/images/background/bg_wood.png", "assets/images/background/bg_ice.png", "assets/images/background/bg_tnt.png", "assets/images/background/bg_swipe.png", "assets/images/background/bg_liquid_cement.png", "assets/images/background/bg_space.png", "assets/images/background/bg_thorn_cement.png", "assets/images/background/bg_hidden.png", "assets/images/background/bg_mixture.png"];
-  // final starBox = AssetImage("assets/star.png");
-  var candy = AssetImage("assets/candy0.png");
   _assetsHelper();
 }
 // ignore: non_constant_identifier_names

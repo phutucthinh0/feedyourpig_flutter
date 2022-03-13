@@ -1,10 +1,14 @@
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-Future<void> showDialogWin(BuildContext context) async {
+import '../../controllers/game_controller.dart';
+
+Future<void> showDialogWin(BuildContext context, VoidCallback Function() backToMaze, VoidCallback Function() backToMap, VoidCallback Function() replay, VoidCallback Function() next) async {
+  GameController _gameController = Get.find();
   return await showDialog(
     context: context,
-    barrierDismissible: true,
+    barrierDismissible: false,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
     barrierColor: Colors.black54,
     builder: (context) {
@@ -31,9 +35,9 @@ Future<void> showDialogWin(BuildContext context) async {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                    Image.asset('assets/images/icon/ic_star.png', height: 40, width: 40,),
-                    Image.asset('assets/images/icon/ic_star.png', height: 40, width: 40,),
-                    Image.asset('assets/images/icon/ic_star.png', height: 40, width: 40,)
+                    Image.asset(_gameController.lightStar.value>=1?'assets/images/icon/ic_star.png':'assets/images/icon/ic_star_lose.png', height: 40, width: 40,),
+                    Image.asset(_gameController.lightStar.value>=2?'assets/images/icon/ic_star.png':'assets/images/icon/ic_star_lose.png', height: 40, width: 40,),
+                    Image.asset(_gameController.lightStar.value>=3?'assets/images/icon/ic_star.png':'assets/images/icon/ic_star_lose.png', height: 40, width: 40,)
                   ],
                   ),
                   SizedBox(
@@ -57,7 +61,8 @@ Future<void> showDialogWin(BuildContext context) async {
                           child: Icon(Icons.home_outlined),
                         ),
                         onPressed: () {
-                          setState(() {});
+                          Get.back();
+                          backToMaze();
                         },
                       ),
                       ElevatedButton(
@@ -75,7 +80,8 @@ Future<void> showDialogWin(BuildContext context) async {
                           child: Icon(Icons.menu),
                         ),
                         onPressed: () {
-                          setState(() {});
+                          Get.back();
+                          backToMap();
                         },
                       ),
                       ElevatedButton(
@@ -93,7 +99,8 @@ Future<void> showDialogWin(BuildContext context) async {
                           child: Icon(Icons.arrow_back),
                         ),
                         onPressed: () {
-                          setState(() {});
+                          Get.back();
+                          replay();
                         },
                       ),
                     ],
@@ -115,7 +122,8 @@ Future<void> showDialogWin(BuildContext context) async {
                       child: Icon(Icons.skip_next_outlined),
                     ),
                     onPressed: () {
-                      setState(() {});
+                      Get.back();
+                      next();
                     },
                   )
                 ],

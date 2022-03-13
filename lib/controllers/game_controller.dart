@@ -12,4 +12,7 @@ class GameController extends GetxController{
   void addLightStar(){
     lightStar(lightStar.value+1);
   }
+  var replay = false.obs;
+  var next = false.obs;
+  var choose_map_id = 0.obs;
 }

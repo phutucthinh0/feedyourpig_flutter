@@ -1,8 +1,10 @@
 
+import 'package:feedyourpig_flutter/controllers/game_controller.dart';
 import 'package:feedyourpig_flutter/helper/text_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-Future<void> showDialogPause(BuildContext context) async{
+Future<void> showDialogPause(BuildContext context, VoidCallback Function() backToMaze, VoidCallback Function() backToMap) async{
   return await showDialog(
     context: context,
     barrierDismissible: true,
@@ -44,8 +46,8 @@ Future<void> showDialogPause(BuildContext context) async{
                         child: Icon(Icons.home_outlined),
                       ),
                       onPressed: () {
-                        setState((){
-                        });
+                        Get.back();
+                        backToMaze();
                       },
                     ),
                     ElevatedButton(
@@ -63,8 +65,7 @@ Future<void> showDialogPause(BuildContext context) async{
                         child: Icon(Icons.play_arrow),
                       ),
                       onPressed: () {
-                        setState((){
-                        });
+                        Get.back();
                       },
                     ),
                     ElevatedButton(
@@ -82,8 +83,8 @@ Future<void> showDialogPause(BuildContext context) async{
                         child: Icon(Icons.menu_sharp),
                       ),
                       onPressed: () {
-                        setState((){
-                        });
+                        Get.back();
+                        backToMap();
                       },
                     ),
                   ],

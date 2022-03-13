@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../constants/box_constant.dart';
+import '../helper/game_helper.dart';
 import 'components/candy.dart';
 import 'components/hidden_bomb.dart';
 import 'components/ice.dart';
@@ -563,6 +564,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     if(isWin){
       candy.add(RemoveEffect());
       pig.current = PigState.eat;
+      onWin();
     }
   }
   void onLose(int type){
@@ -619,6 +621,15 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     }
     Future.delayed(Duration(milliseconds: (_duration*1000).toInt()),(){
       pig.current = PigState.sad;
+      Future.delayed(Duration(milliseconds: 500),()async{
+        _gameController.map(await GameHelper.getMap(_gameController.maze.value, _gameController.choose_map_id.value));
+        _gameController.replay(true);
+      });
+    });
+  }
+  void onWin(){
+    Future.delayed(Duration(milliseconds: 500),(){
+      _gameController.next(true);
     });
   }
   void checkPrepareWin(){

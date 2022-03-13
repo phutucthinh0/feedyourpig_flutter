@@ -9,11 +9,13 @@ import 'package:feedyourpig_flutter/models/maze_model.dart';
 import 'package:feedyourpig_flutter/screens/gallery_screen.dart';
 import 'package:feedyourpig_flutter/screens/play_screen.dart';
 import 'package:feedyourpig_flutter/widgets/container_flexible.dart';
+import 'package:feedyourpig_flutter/widgets/dialogs/dialog_win.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../enum/screen_enum.dart';
+import '../widgets/dialogs/dialog_pause.dart';
 
 class GameScreen extends StatefulWidget {
   final int index;
@@ -22,14 +24,13 @@ class GameScreen extends StatefulWidget {
   _GameScreenState createState() => _GameScreenState();
 }
 class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateMixin {
-  var _gameHelper = GameHelper();
   final GameController _gameController = Get.put(GameController());
   late List<MazeModel> _listMaze;
   var willScreen = Screen.ChooseMaze;
   bool _animBlack = false;
   late Image background_screen = Image(width: double.infinity, height: double.infinity, image: AssetImage(AssetsHelper.listBackgroundAddress[0]), fit: BoxFit.cover);
   int choose_maze_id = 0;
-  int choose_map_id = 0;
+  // int choose_map_id = 0;
   // final controller = PageController(viewportFraction: 0.7);
   late PageController controller;
   double currentPage = 0.0;
@@ -46,15 +47,14 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
     _handleBlackScreen();
   }
   _handleSelectedMap(int mapId)async{
-    choose_map_id = mapId;
-    _gameController.map(await _gameHelper.getMap(_gameController.maze.value, mapId));
+    _gameController.choose_map_id(mapId);
+    _gameController.map(await GameHelper.getMap(_gameController.maze.value, mapId));
     willScreen = Screen.Play;
     _handleBlackScreen();
   }
   _handleBackToMap(){
     willScreen = Screen.ChooseMap;
     _handleBlackScreen();
-
   }
   _handleBlackScreen([int duration = 400]){
     setState(() {
@@ -62,15 +62,38 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
       _animBlack = true;
     });
   }
-
+  _handleReplay()async{
+    _gameController.map(await GameHelper.getMap(_gameController.maze.value, _gameController.choose_map_id.value));
+    _gameController.replay(true);
+  }
+  _handleNext()async{
+    if(_gameController.choose_map_id.value==24){
+      _handleBackToMaze();
+    }else{
+      _gameController.choose_map_id(_gameController.choose_map_id.value+1);
+      _gameController.map(await GameHelper.getMap(_gameController.maze.value, _gameController.choose_map_id.value));
+      _gameController.replay(true);
+    }
+  }
   @override
   void initState() {
     super.initState();
     initStateAsync();
     controller = PageController(initialPage: widget.index, viewportFraction: 0.7);
+    _gameController.next.listen((p0) async{
+      if(p0){
+        showDialogWin(context,
+              ()=>_handleBackToMaze(),
+              ()=>_handleBackToMap(),
+              ()=>_handleReplay(),
+              ()=>_handleNext()
+        );
+        _gameController.next(false);
+      }
+    });
   }
   initStateAsync() async{
-    _listMaze = await _gameHelper.getListMaze();
+    _listMaze = await GameHelper.getListMaze();
   }
   @override
   Widget build(BuildContext context) {
@@ -263,6 +286,28 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
           children: [
             background_screen,
             PlayScreen(),
+            Align(
+              alignment: Alignment.topRight,
+              child: buttonUI(
+                width: 40,
+                height: 40,
+                margin: EdgeInsets.only(top: 10, right:  10),
+                src: 'assets/images/icon/ic_pause.png',
+                onTap: (){
+                  showDialogPause(context, ()=>_handleBackToMaze(), ()=>_handleBackToMap());
+                },
+              ),
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: buttonUI(
+                width: 40,
+                height: 40,
+                margin: EdgeInsets.only(top: 10, right:  60),
+                src: 'assets/images/icon/ic_back2.png',
+                onTap: ()=>_handleReplay(),
+              ),
+            )
           ],
         );
       }
