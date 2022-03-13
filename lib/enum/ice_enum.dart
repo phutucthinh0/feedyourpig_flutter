@@ -1,5 +1,9 @@
 enum IceState {
   normal,
-  cracking,
+  effect,
   broken,
+}
+enum IceStarState {
+  normal,
+  effect,
 }

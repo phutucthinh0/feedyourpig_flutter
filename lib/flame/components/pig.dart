@@ -23,7 +23,8 @@ class Pig extends SpriteAnimationGroupComponent {
     final sad_sprites = [1,2,3,4,5,6].map((i) => Sprite.load('pigs/pig0_sad${i}.png'));
     final sad_animation = SpriteAnimation.spriteList(
         await Future.wait(sad_sprites),
-        stepTime: 0.04
+        stepTime: 0.06,
+        loop: false
     );
     animations = {
       PigState.stand: stand_animation,

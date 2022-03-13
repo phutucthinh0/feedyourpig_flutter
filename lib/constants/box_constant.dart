@@ -5,10 +5,10 @@ class Box{
   static const int thorn = 13;
   static const int ice = 14;
   static const int iceEffect = 141;
-  static const int iceBreak = 142;
+  static const int iceBroken = 142;
   static const int iceStar = 140;
   static const int iceStarEffect = 1401;
-  static const int iceStarBreak = 1402;
+  static const int iceStarBroken = 1402;
   static const int tnt = 15;
   static const int tntEffect = 151;
   static const int top = 16;
