@@ -5,7 +5,7 @@ import 'package:feedyourpig_flutter/models/maze_model.dart';
 import 'package:flutter/services.dart';
 
 class GameHelper {
-  Future<List<MazeModel>> getListMaze() async {
+  static Future<List<MazeModel>> getListMaze() async {
     List<MazeModel> _list = [];
     Map<String, dynamic> _data = jsonDecode(await rootBundle.loadString('assets/game.json'));
     _data['maze'].forEach((e){
@@ -13,7 +13,7 @@ class GameHelper {
     });
     return _list;
   }
-  Future<MapModel> getMap(MazeModel mazeModel, int index) async{
+  static Future<MapModel> getMap(MazeModel mazeModel, int index) async{
     Map<String, dynamic> _data = jsonDecode(await rootBundle.loadString('assets/game.json'));
     return MapModel.initData(_data[mazeModel.name][index]);
   }

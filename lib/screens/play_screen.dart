@@ -14,8 +14,14 @@ class PlayScreen extends StatefulWidget {
 }
 
 class _PlayScreenState extends State<PlayScreen> {
-  final mainGame = MainGame();
+  // final mainGame = MainGame();
   GameController gameController = Get.find();
+  bool loadGame = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return ContainerFlexible(
@@ -27,8 +33,9 @@ class _PlayScreenState extends State<PlayScreen> {
       // ),
       child: Stack(
         children: [
+          if(loadGame)
           GameWidget(
-            game: mainGame,
+            game: MainGame(),
           ),
           Align(
             alignment: Alignment.topLeft,
@@ -78,6 +85,33 @@ class _PlayScreenState extends State<PlayScreen> {
                     starWidget(gameController.lightStar.value >= 2),
                     starWidget(gameController.lightStar.value >= 3)
                   ],
+                ),
+              ),
+            ),
+          ),
+          Obx(
+            ()=> IgnorePointer(
+              ignoring: true,
+              child: AnimatedOpacity(
+                opacity: gameController.replay.value ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 200),
+                onEnd: () {
+                  if(gameController.replay.value){
+                    setState(() {
+                      loadGame = false;
+                    });
+                    Future.delayed(Duration(milliseconds: 50),(){
+                      gameController.replay(false);
+                      setState(() {
+                        loadGame = true;
+                      });
+                    });
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Colors.black,
                 ),
               ),
             ),

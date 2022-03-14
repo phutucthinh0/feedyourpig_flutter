@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState(){
     super.initState();
     SystemConstant.initialize();
-    Timer(Duration(seconds: 5), ()=>Get.off(()=>HomeScreen()),);
+    Timer(Duration(seconds: 2), ()=>Get.off(()=>HomeScreen()),);
   }
   Widget build(BuildContext context) {
     return Scaffold(
