@@ -180,29 +180,30 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
                   },
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                  buttonUI(
-                    width: 55,
-                    height: 55,
-                    src: 'assets/images/icon/ic_change_candy.png',
-                    onTap: ()=>Get.to(()=>GalleryScreen(index: 1 ,) ),
-                  ),
 
-                  buttonUI(
-                    width: 55,
-                    height: 55,
-                    src: 'assets/images/icon/ic_change_pig.png',
-                    onTap: ()=>Get.to(()=>GalleryScreen() ),
-                  ),
-                  SizedBox(width: 80,),
-                  TextUI('300',fontSize: 32,color: Colors.white,),
-                  Image.asset('assets/images/icon/ic_star.png',width: 35, height: 35,)
-                ],),
-              )
+              // Container(
+              //   margin: const EdgeInsets.only(top: 20),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //     children: [
+              //     buttonUI(
+              //       width: 55,
+              //       height: 55,
+              //       src: 'assets/images/icon/ic_change_candy.png',
+              //       onTap: ()=>Get.to(()=>GalleryScreen(index: 1 ,) ),
+              //     ),
+              //
+              //     buttonUI(
+              //       width: 55,
+              //       height: 55,
+              //       src: 'assets/images/icon/ic_change_pig.png',
+              //       onTap: ()=>Get.to(()=>GalleryScreen() ),
+              //     ),
+              //     SizedBox(width: 80,),
+              //     TextUI('300',fontSize: 32,color: Colors.white,),
+              //     Image.asset('assets/images/icon/ic_star.png',width: 35, height: 35,)
+              //   ],),
+              // )
             ]);
       }
       case Screen.ChooseMap:{
