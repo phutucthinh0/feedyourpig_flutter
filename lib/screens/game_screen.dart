@@ -50,6 +50,9 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
   }
   _handleSelectedMap(int mapId)async{
     AudioUtils.click();
+    if(mapId<=1){
+      _gameController.isHelp(true);
+    }
     _gameController.choose_map_id(mapId);
     _gameController.map(await GameHelper.getMap(_gameController.maze.value, mapId));
     willScreen = Screen.Play;
@@ -77,6 +80,9 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
   }
   _handleNext()async{
     _gameController.isHelp(false);
+    if(_gameController.choose_map_id.value==0){
+      _gameController.isHelp(true);
+    }
     if(_gameController.choose_map_id.value==24){
       _handleBackToMaze();
     }else{
@@ -120,7 +126,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
           return true;
         },
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           body: ContainerFlexible(
             decoration: BoxDecoration(image: DecorationImage(image: AssetImage("assets/images/background/background.png"), fit: BoxFit.cover)),
             child: Stack(

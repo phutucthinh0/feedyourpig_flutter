@@ -46,54 +46,70 @@ class _HomeScreenState extends State<HomeScreen> {
     return WillPopScope(
       onWillPop:  () async => showDialogCloseApp(context),
       child: Scaffold(
-        body: ContainerFlexible(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/background/background_main.png'),
-              fit: BoxFit.fill,
-            )
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
+        body: Stack(
+          children: [
+            if(GetPlatform.isDesktop)
               Align(
-                child: buttonUI(width: 300, height: 60,
-                  text: "Play",
-                  fontSize: 48,
-                  src: 'assets/images/button/btnstylenext.png',
-                  margin: EdgeInsets.only(bottom: 40),
-                  onTap: (){
-                    AudioUtils.click();
-                    Get.to(()=>GameScreen(),transition: Transition.rightToLeftWithFade , duration: Duration(milliseconds: 500));
-                  },
+                alignment: Alignment.centerRight,
+                child: Image.asset("assets/tutorial1.jpg", width: 400, height: 400,),
+              ),
+            if(GetPlatform.isDesktop)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Image.asset("assets/tutorial2.jpg", width: 400, height: 400,),
+              ),
+            Center(
+              child: ContainerFlexible(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/background/background_main.png'),
+                    fit: BoxFit.fill,
+                  )
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Align(
+                      child: buttonUI(width: 300, height: 60,
+                        text: "Play",
+                        fontSize: 48,
+                        src: 'assets/images/button/btnstylenext.png',
+                        margin: EdgeInsets.only(bottom: 40),
+                        onTap: (){
+                          AudioUtils.click();
+                          Get.to(()=>GameScreen(),transition: Transition.rightToLeftWithFade , duration: Duration(milliseconds: 500));
+                        },
+                      ),
+                    ),
+                    Align(
+                      child: buttonUI(width: 300, height: 60,
+                        text: "Gallery",
+                        fontSize: 36,
+                        src: 'assets/images/button/btnstylenext.png',
+                        margin: EdgeInsets.only(top: 140),
+                        onTap:(){
+                          AudioUtils.click();
+                          Get.to(()=>GalleryScreen(),transition: Transition.rightToLeftWithFade , duration: Duration(milliseconds: 500));
+                        },
+                      ),
+                    ),
+                    Align(
+                      child: buttonUI(width: 300, height: 60,
+                        fontSize: 36,
+                        text: "Setting",
+                        src: 'assets/images/button/btnstylenext.png',
+                        margin: EdgeInsets.only(top:320),
+                        onTap: (){
+                          AudioUtils.click();
+                          showDialogSetting(context);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Align(
-                child: buttonUI(width: 300, height: 60,
-                  text: "Gallery",
-                  fontSize: 36,
-                  src: 'assets/images/button/btnstylenext.png',
-                  margin: EdgeInsets.only(top: 140),
-                  onTap:(){
-                    AudioUtils.click();
-                    Get.to(()=>GalleryScreen(),transition: Transition.rightToLeftWithFade , duration: Duration(milliseconds: 500));
-                  },
-                ),
-              ),
-              Align(
-                child: buttonUI(width: 300, height: 60,
-                  fontSize: 36,
-                  text: "Setting",
-                  src: 'assets/images/button/btnstylenext.png',
-                  margin: EdgeInsets.only(top:320),
-                  onTap: (){
-                    AudioUtils.click();
-                    showDialogSetting(context);
-                  },
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
