@@ -21,7 +21,7 @@ class Ice extends SpriteAnimationGroupComponent {
     );
 
     final effect_sprites = [2,3,4].map((i) => Sprite.load('box/icebox$i.png'));
-    final effectgAnimation = await SpriteAnimation.spriteList(
+    final effectAnimation = await SpriteAnimation.spriteList(
         await Future.wait(effect_sprites),
         stepTime: 0.05,
     );
@@ -35,7 +35,7 @@ class Ice extends SpriteAnimationGroupComponent {
 
     animations = {
       IceState.normal: normalAnimation,
-      IceState.effect: effectgAnimation,
+      IceState.effect: effectAnimation,
       IceState.broken: brokenAnimation
     };
 

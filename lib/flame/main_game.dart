@@ -6,6 +6,7 @@ import 'package:feedyourpig_flutter/controllers/game_controller.dart';
 import 'package:feedyourpig_flutter/enum/candy_enum.dart';
 import 'package:feedyourpig_flutter/enum/ice_enum.dart';
 import 'package:feedyourpig_flutter/enum/pig_enum.dart';
+import 'package:feedyourpig_flutter/enum/thorn_cement_enum.dart';
 import 'package:feedyourpig_flutter/flame/components/cement.dart';
 import 'package:feedyourpig_flutter/flame/components/iceStar.dart';
 import 'package:feedyourpig_flutter/flame/components/liquidCement.dart';
@@ -14,6 +15,7 @@ import 'package:feedyourpig_flutter/flame/components/spaceBlue.dart';
 import 'package:feedyourpig_flutter/flame/components/swipe_bottom.dart';
 import 'package:feedyourpig_flutter/flame/components/swipe_top.dart';
 import 'package:feedyourpig_flutter/flame/components/thorn.dart';
+import 'package:feedyourpig_flutter/flame/components/thornCement.dart';
 import 'package:feedyourpig_flutter/flame/components/tntEffect.dart';
 import 'package:feedyourpig_flutter/models/map_model.dart';
 import 'package:flame/components.dart';
@@ -61,6 +63,8 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
   int box_liquid_cement = 0;
   List<int> box_space = [-1,-1];
   List<int> box_space_disapear  = [-1,-1,-1];
+  List<int> box_cement_thorn = [-1,-1];
+  bool box_hidden_bomb_kill =false;
   //Special effect box
   bool special_box = false;
   @override
@@ -153,6 +157,17 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
           }
           case Box.spaceRed:{
             _listBox[i][j] = SpaceRed(i,j);
+            break;
+          }
+          case Box.cementThorn:{
+            _listBox[i][j] = ThornCement(i,j);
+            break;
+          }
+          case Box.hiddenBomb:{
+            _listBox[i][j] = HiddenBomb(i,j);
+            Future.delayed(Duration(seconds: 6),(){
+              remove(_listBox[i][j]!);
+            });
             break;
           }
         }
@@ -485,6 +500,57 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
       box_space[1]=_map.game![candyX][candyY];
       return true;
     }
+    if(_map.game![candyX][candyY]==Box.cementThorn){
+      switch (swipeDirection){
+        case 1:{
+          candy_p[1]=candyY+1;
+          break;
+        }
+        case 2:{
+          candy_p[0]=candyX-1;
+          break;
+        }
+        case 3:{
+          candy_p[1]=candyY-1;
+          break;
+        }
+        case 4:{
+          candy_p[0]=candyX+1;
+          break;
+        }
+      }
+      box_cement_thorn[0]=candyX;
+      box_cement_thorn[1]=candyY;
+      checkPrepareWin();
+      return true;
+    }
+    if (_map.game![candyX][candyY]==Box.cementThornEffect){
+      switch (swipeDirection){
+        case 1:{
+          candy_p[1]=candyY+1;
+          break;
+        }
+        case 2:{
+          candy_p[0]=candyX-1;
+          break;
+        }
+        case 3:{
+          candy_p[1]=candyY-1;
+          break;
+        }
+        case 4:{
+          candy_p[0]=candyX+1;
+          break;
+        }
+      }
+      return true;
+    }
+    if(_map.game![candyX][candyY]==Box.hiddenBomb){
+      candy_p[0]=candyX;
+      candy_p[1]=candyY;
+      box_hidden_bomb_kill=true;
+      return true;
+    }
     // Pig
     if (candyX == pig_p[0] && candyY == pig_p[1]) {
       isWin = true;
@@ -522,7 +588,18 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
             });
           }
         }
-
+        if(_map.game![i][j] == Box.cementThornEffect){
+          if((pow(candy_p[0]-i, 2) + pow(candy_p[1]-j, 2)) > 1){
+            _map.game![i][j] = Box.thorn;
+            SpriteAnimationGroupComponent thornCement =  _listBox[i][j]! as SpriteAnimationGroupComponent;
+            thornCement.current = ThornCementState.broken;
+            Future.delayed(Duration(milliseconds: 450),(){
+              remove(_listBox[i][j]!);
+              _listBox[i][j] = Thorn(i,j);
+              add(_listBox[i][j]!);
+            });
+          }
+        }
       }
     }
   }
@@ -883,7 +960,23 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
           }
         }
       }
+      return;
     }
+    //Box thorn cement
+    if(box_cement_thorn[0]!=-1){
+      SpriteAnimationGroupComponent thornCement =  _listBox[box_cement_thorn[0]][box_cement_thorn[1]]! as SpriteAnimationGroupComponent;
+      thornCement.current = ThornCementState.effect;
+      _map.game![box_cement_thorn[0]][box_cement_thorn[1]] = Box.cementThornEffect;
+      box_cement_thorn[0] = -1;
+      special_box = true;
+      return;
+    }
+    //Box hidden bomb
+    if(box_hidden_bomb_kill){
+      onLose(-6);
+      return;
+    }
+
     if(isWin){
       candy.add(RemoveEffect());
       pig.current = PigState.eat;
@@ -955,6 +1048,19 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
       case -5:{
         _duration = 0.25;
         candy.current = CandyState.explosion1;
+        break;
+      }
+      case -6:{
+        _map.game![candy_p[0]][candy_p[1]] = 0;
+        for(int i=0; i<=10; i++)
+          // ignore: curly_braces_in_flow_control_structures
+          for(int j=0; j<=18;j++){
+            if(_map.game![i][j]==Box.hiddenBomb){
+              add(HiddenBomb(i, j));
+            }
+          }
+        _duration = 0.25;
+        candy.current = CandyState.explosion2;
         break;
       }
     }
