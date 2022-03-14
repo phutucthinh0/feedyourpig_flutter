@@ -11,6 +11,7 @@ import 'package:feedyourpig_flutter/flame/components/net.dart';
 import 'package:feedyourpig_flutter/flame/components/swipe_bottom.dart';
 import 'package:feedyourpig_flutter/flame/components/swipe_top.dart';
 import 'package:feedyourpig_flutter/flame/components/thorn.dart';
+import 'package:feedyourpig_flutter/flame/components/tntEffect.dart';
 import 'package:feedyourpig_flutter/models/map_model.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -50,6 +51,9 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
   List<int> box_wood = [-1,-1,-1];
   List<int> box_ice = [-1,-1];
   List<int> box_icestar = [-1,-1];
+  List<int> box_tnt = [-1,-1,-1];
+  bool is_tnt_effect = false;
+  int box_swipe = 0;
   //Special effect box
   bool special_box = false;
   @override
@@ -108,30 +112,26 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
             _listBox[i][j] = IceStar(i,j);
             break;
           }
-          // case Box.hiddenBomb:{
-          //   _listBox.add(HiddenBomb(i,j));
-          //   break;
-          // }
-          // case Box.bottom:{
-          //   _listBox.add(SwipeBottom(i,j));
-          //   break;
-          // }
-          // case Box.end:{
-          //   _listBox.add(SwipeEnd(i,j));
-          //   break;
-          // }
-          // case Box.start:{
-          //   _listBox.add(SwipeStart(i,j));
-          //   break;
-          // }
-          // case Box.top:{
-          //   _listBox.add(SwipeTop(i,j));
-          //   break;
-          // }
-          // case Box.tnt:{
-          //   _listBox.add(Tnt(i,j));
-          //   break;
-          // }
+          case Box.tnt:{
+            _listBox[i][j] = Tnt(i,j);
+            break;
+          }
+          case Box.start:{
+            _listBox[i][j] = SwipeStart(i,j);
+            break;
+          }
+          case Box.top:{
+            _listBox[i][j] = SwipeTop(i,j);
+            break;
+          }
+          case Box.end:{
+            _listBox[i][j] = SwipeEnd(i,j);
+            break;
+          }
+          case Box.bottom:{
+            _listBox[i][j] = SwipeBottom(i,j);
+            break;
+          }
         }
       }
     for(int i=0; i<=10; i++)
@@ -348,6 +348,82 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     if (_map.game![candyX][candyY] == Box.iceStarEffect) {
       return true;
     }
+    if (_map.game![candyX][candyY] == Box.tnt) {
+      switch (swipeDirection) {
+        case 1: {
+          candy_p[1] = candyY + 1;
+          if ((candyY == 0) || (_map.game![candyX][candyY - 1] != 0)) {
+            checkPrepareWin();
+            // soundHelper.explosion();
+            tnt_effect(candyX, candyY);
+            return true;
+          }
+          break;
+        }
+        case 2: {
+          candy_p[0] = candyX - 1;
+          if ((candyX == 10) || (_map.game![candyX + 1][candyY] != 0)) {
+            // soundHelper.explosion();
+            checkPrepareWin();
+            tnt_effect(candyX, candyY);
+            return true;
+          }
+          break;
+        }
+        case 3: {
+          candy_p[1] = candyY - 1;
+          if ((candyY == 18) || (_map.game![candyX][candyY + 1] != 0)) {
+            // soundHelper.explosion();
+            checkPrepareWin();
+            tnt_effect(candyX, candyY);
+            return true;
+          }
+          break;
+        }
+        case 4: {
+          candy_p[0] = candyX + 1;
+          if ((candyX == 0) || (_map.game![candyX - 1][candyY] != 0)) {
+            // soundHelper.explosion();
+            checkPrepareWin();
+            tnt_effect(candyX, candyY);
+            return true;
+          }
+          break;
+        }
+        default: {
+        }
+      }
+      _map.game![candyX][candyY] = 0;
+      box_tnt[0] = candyX;
+      box_tnt[1] = candyY;
+      box_tnt[2] = swipeDirection;
+      checkPrepareWin();
+      return true;
+    }
+    if (16<=_map.game![candyX][candyY]&&_map.game![candyX][candyY]<=19){
+      if(candy_p[0]==candyX&&candy_p[1]==candyY)return false;
+      candy_p[0]=candyX;
+      candy_p[1]=candyY;
+      switch (_map.game![candyX][candyY]){
+        case Box.top:{
+          box_swipe =1;
+          break;
+        }
+        case Box.end:{
+          box_swipe =2;
+          break;
+        }
+        case Box.bottom:{
+          box_swipe =3;
+          break;
+        }
+        case Box.start:{
+          box_swipe =4;
+          break;
+        }
+      }
+      return true;
+    }
     // Pig
     if (candyX == pig_p[0] && candyY == pig_p[1]) {
       isWin = true;
@@ -443,13 +519,11 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
       }
       return;
     }
-
     // Box thorn
     if(box_thorn_kill){
       onLose(-5);
       return;
     }
-
     // Box wood
     if(box_wood[0]!=-1){
       doingAnimationCandy = true;
@@ -541,7 +615,6 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
       }
       return;
     }
-
     //Box ice
     if(box_ice[0]!=-1){
       SpriteAnimationGroupComponent ice =  _listBox[box_ice[0]][box_ice[1]]! as SpriteAnimationGroupComponent;
@@ -560,12 +633,151 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
       special_box = true;
       return;
     }
-
+    //Box tnt
+    if(box_tnt[0]!=-1){
+      doingAnimationCandy = true;
+      switch (box_tnt[2]){
+        case 1:{
+          await _listBox[box_tnt[0]][box_tnt[1]]!.add(MoveEffect.to(
+              getPositionByMap(box_tnt[0], box_tnt[1]-1),
+              EffectController(
+                  duration: 0.02
+              )
+          ));
+          Future.delayed(Duration(milliseconds: 200),(){
+            doingAnimationCandy = false;
+            _map.game![box_tnt[0]][box_tnt[1] - 1] = Box.tnt;
+            _listBox[box_tnt[0]][box_tnt[1]-1] = Tnt(box_tnt[0],box_tnt[1]-1);
+            add(_listBox[box_tnt[0]][box_tnt[1]-1]!);
+            remove(_listBox[box_tnt[0]][box_tnt[1]]!);
+            box_tnt[0] = -1;
+          });
+          break;
+        }
+        case 2:{
+          await _listBox[box_tnt[0]][box_tnt[1]]!.add(MoveEffect.to(
+              getPositionByMap(box_tnt[0]+1, box_tnt[1]),
+              EffectController(
+                  duration: 0.02
+              )
+          ));
+          Future.delayed(Duration(milliseconds: 200),(){
+            doingAnimationCandy = false;
+            _map.game![box_tnt[0]+1][box_tnt[1]] = Box.tnt;
+            _listBox[box_tnt[0]+1][box_tnt[1]] = Tnt(box_tnt[0]+1,box_tnt[1]);
+            add(_listBox[box_tnt[0]+1][box_tnt[1]]!);
+            remove(_listBox[box_tnt[0]][box_tnt[1]]!);
+            box_tnt[0] = -1;
+          });
+          break;
+        }
+        case 3:{
+          await _listBox[box_tnt[0]][box_tnt[1]]!.add(MoveEffect.to(
+              getPositionByMap(box_tnt[0], box_tnt[1]+1),
+              EffectController(
+                  duration: 0.02
+              )
+          ));
+          Future.delayed(Duration(milliseconds: 200),(){
+            doingAnimationCandy = false;
+            _map.game![box_tnt[0]][box_tnt[1]+1] = Box.tnt;
+            _listBox[box_tnt[0]][box_tnt[1]+1] = Tnt(box_tnt[0],box_tnt[1]+1);
+            add(_listBox[box_tnt[0]][box_tnt[1]+1]!);
+            remove(_listBox[box_tnt[0]][box_tnt[1]]!);
+            box_tnt[0] = -1;
+          });
+          break;
+        }
+        case 4:{
+          await _listBox[box_tnt[0]][box_tnt[1]]!.add(MoveEffect.to(
+              getPositionByMap(box_tnt[0]-1, box_tnt[1]),
+              EffectController(
+                  duration: 0.02
+              )
+          ));
+          Future.delayed(Duration(milliseconds: 200),(){
+            doingAnimationCandy = false;
+            _map.game![box_tnt[0]-1][box_tnt[1]] = Box.tnt;
+            _listBox[box_tnt[0]-1][box_tnt[1]] = Tnt(box_tnt[0]-1,box_tnt[1]);
+            add(_listBox[box_tnt[0]-1][box_tnt[1]]!);
+            remove(_listBox[box_tnt[0]][box_tnt[1]]!);
+            box_tnt[0] = -1;
+          });
+          break;
+        }
+      }
+    }
+    //Box tnt effect
+    if(is_tnt_effect){
+      is_tnt_effect = false;
+      for(int i=0; i<=10; i++){
+        for(int j=0; j<=18;j++){
+          if(_map.game![i][j]==Box.tntEffect){
+            if(_listBox[i][j]!=null)remove(_listBox[i][j]!);
+            _listBox[i][j] = TntEffect(i, j);
+            add(_listBox[i][j]!);
+          }
+        }
+      }
+      Future.delayed(Duration(milliseconds: 50),(){
+        for(int i=0; i<=10; i++){
+          for(int j=0; j<=18;j++){
+            if(_map.game![i][j]==Box.tntEffect){
+              if(_listBox[i][j]!=null)remove(_listBox[i][j]!);
+              _listBox[i][j]=null;
+              _map.game![i][j]=0;
+            }
+          }
+        }
+      });
+    }
+    //Box swipe
+    if(box_swipe!=0){
+      switch (box_swipe) {
+        case 1: {
+          box_swipe = 0;
+          onSwipeTop();
+          break;
+        }
+        case 2: {
+          box_swipe = 0;
+          onSwipeRight();
+          break;
+        }
+        case 3: {
+          box_swipe = 0;
+          onSwipeBottom();
+          break;
+        }
+        case 4: {
+          box_swipe = 0;
+          onSwipeLeft();
+          break;
+        }
+      }
+      return;
+    }
     if(isWin){
       candy.add(RemoveEffect());
       pig.current = PigState.eat;
       onWin();
     }
+  }
+  void tnt_effect(int x, int y){
+    is_tnt_effect = true;
+    _map.game![x][y] = 0;
+    for (int j = y - 1; j <= y + 1; j++)
+      // ignore: curly_braces_in_flow_control_structures
+      for (int i = x - 1; i <= x + 1; i++) {
+        if (i < 0 || i > 10 || j < 0 || j > 18) continue;
+        if (_map.game![i][j] != Box.spaceBlue && _map.game![i][j] != Box.spaceRed)
+          // ignore: curly_braces_in_flow_control_structures
+          if (_map.game![i][j] != Box.tnt) {
+            _map.game![i][j] = Box.tntEffect;
+          } else {
+            tnt_effect(i, j);
+          }
+      }
   }
   void onLose(int type){
     double _duration = 0;
