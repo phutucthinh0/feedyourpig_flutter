@@ -305,7 +305,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
                 width: 40,
                 height: 40,
                 margin: EdgeInsets.only(top: 10, right:  60),
-                src: 'assets/images/icon/ic_back2.png',
+                src: 'assets/images/icon/ic_replay.png',
                 onTap: ()=>_handleReplay(),
               ),
             )
