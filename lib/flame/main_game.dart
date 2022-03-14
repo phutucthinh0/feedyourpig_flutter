@@ -6,8 +6,11 @@ import 'package:feedyourpig_flutter/controllers/game_controller.dart';
 import 'package:feedyourpig_flutter/enum/candy_enum.dart';
 import 'package:feedyourpig_flutter/enum/ice_enum.dart';
 import 'package:feedyourpig_flutter/enum/pig_enum.dart';
+import 'package:feedyourpig_flutter/flame/components/cement.dart';
 import 'package:feedyourpig_flutter/flame/components/iceStar.dart';
+import 'package:feedyourpig_flutter/flame/components/liquidCement.dart';
 import 'package:feedyourpig_flutter/flame/components/net.dart';
+import 'package:feedyourpig_flutter/flame/components/spaceBlue.dart';
 import 'package:feedyourpig_flutter/flame/components/swipe_bottom.dart';
 import 'package:feedyourpig_flutter/flame/components/swipe_top.dart';
 import 'package:feedyourpig_flutter/flame/components/thorn.dart';
@@ -27,6 +30,7 @@ import 'components/hidden_bomb.dart';
 import 'components/ice.dart';
 import 'components/iron.dart';
 import 'components/pig.dart';
+import 'components/spaceRed.dart';
 import 'components/star.dart';
 import 'components/swipe_end.dart';
 import 'components/swipe_start.dart';
@@ -54,6 +58,9 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
   List<int> box_tnt = [-1,-1,-1];
   bool is_tnt_effect = false;
   int box_swipe = 0;
+  int box_liquid_cement = 0;
+  List<int> box_space = [-1,-1];
+  List<int> box_space_disapear  = [-1,-1,-1];
   //Special effect box
   bool special_box = false;
   @override
@@ -130,6 +137,22 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
           }
           case Box.bottom:{
             _listBox[i][j] = SwipeBottom(i,j);
+            break;
+          }
+          case Box.liquidCement:{
+            _listBox[i][j] = LiquidCement(i,j);
+            break;
+          }
+          case Box.cement:{
+            _listBox[i][j] = Cement(i,j);
+            break;
+          }
+          case Box.spaceBlue:{
+            _listBox[i][j] = SpaceBlue(i,j);
+            break;
+          }
+          case Box.spaceRed:{
+            _listBox[i][j] = SpaceRed(i,j);
             break;
           }
         }
@@ -422,6 +445,44 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
           break;
         }
       }
+      return true;
+    }
+    if(_map.game![candyX][candyY] == Box.liquidCement){
+      if(candy_p[0]==candyX&&candy_p[1]==candyY)return false;
+      candy_p[0]=candyX;
+      candy_p[1]=candyY;
+      box_liquid_cement=swipeDirection;
+      return true;
+    }
+    if(_map.game![candyX][candyY]==Box.cement){
+      if(candy_p[0]==candyX&&candy_p[1]==candyY)return false;
+      switch (swipeDirection){
+        case 1:{
+          candy_p[1]=candyY+1;
+          break;
+        }
+        case 2:{
+          candy_p[0]=candyX-1;
+          break;
+        }
+        case 3:{
+          candy_p[1]=candyY-1;
+          break;
+        }
+        case 4:{
+          candy_p[0]=candyX+1;
+          break;
+        }
+      }
+      checkPrepareWin();
+      return true;
+    }
+    if(_map.game![candyX][candyY]==Box.spaceBlue||_map.game![candyX][candyY]== Box.spaceRed){
+      if(candy_p[0]==candyX&&candy_p[1]==candyY)return false;
+      candy_p[0]=candyX;
+      candy_p[1]=candyY;
+      box_space[0]=11*candyY+candyX;
+      box_space[1]=_map.game![candyX][candyY];
       return true;
     }
     // Pig
@@ -756,6 +817,72 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
         }
       }
       return;
+    }
+    //Box liquid cement
+    if(box_liquid_cement!=0){
+      _map.game![candy_p[0]][candy_p[1]]=Box.cement;
+      remove(_listBox[candy_p[0]][candy_p[1]]!);
+      _listBox[candy_p[0]][candy_p[1]] = Cement(candy_p[0],candy_p[1]);
+      add(_listBox[candy_p[0]][candy_p[1]]!);
+      switch (box_liquid_cement){
+        case 1:{
+          box_liquid_cement=0;
+          onSwipeTop();
+          break;
+        }
+        case 2:{
+          box_liquid_cement=0;
+          onSwipeRight();
+          break;
+        }
+        case 3:{
+          box_liquid_cement=0;
+          onSwipeBottom();
+          break;
+        }
+        case 4:{
+          box_liquid_cement=0;
+          onSwipeLeft();
+          break;
+        }
+      }
+      return;
+    }
+    //Box space
+    if(box_space[0]!=-1){
+      loop:
+      for(int i = 0;i<=10;i++){
+        for(int j =0;j<=18;j++){
+          if (_map.game![i][j]==box_space[1]&&((11*j+i)!=box_space[0])){
+            candy.add(
+              OpacityEffect.fadeOut(
+                EffectController(
+                  duration: 0.02
+                )
+              )
+            );
+            candy.position = getPositionByMap(i, j);
+            candy.add(
+                OpacityEffect.fadeIn(
+                    EffectController(
+                        duration: 0.02,
+                        startDelay: 0.02
+                    )
+                )
+            );
+            box_space[0]=-1;
+            candy_p[0] = i;
+            candy_p[1] = j;
+            candy_p_old[0] = i;
+            candy_p_old[1] =j;
+            box_space_disapear[0]=i;
+            box_space_disapear[1]=j;
+            box_space_disapear[2]=0;
+            checkPrepareWin();
+            break loop;
+          }
+        }
+      }
     }
     if(isWin){
       candy.add(RemoveEffect());
