@@ -24,6 +24,7 @@ import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../constants/box_constant.dart';
@@ -41,7 +42,7 @@ import 'components/swipe_start.dart';
 import 'components/tnt.dart';
 import 'components/wood.dart';
 
-class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetector{
+class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetector, KeyboardEvents{
   bool isHelp = false;
   int stepHelp = 0;
   SpriteComponent? hand;
@@ -248,6 +249,73 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
         onSwipeRight();
       }
     }
+  }
+
+  @override
+  KeyEventResult onKeyEvent(
+      RawKeyEvent event,
+      Set<LogicalKeyboardKey> keysPressed,
+      ) {
+    final isKeyDown = event is RawKeyDownEvent;
+    final isMoveTop = keysPressed.contains(LogicalKeyboardKey.arrowUp)||keysPressed.contains(LogicalKeyboardKey.keyW);
+    final isMoveBottom = keysPressed.contains(LogicalKeyboardKey.arrowDown)||keysPressed.contains(LogicalKeyboardKey.keyS);
+    final isMoveLeft = keysPressed.contains(LogicalKeyboardKey.arrowLeft)||keysPressed.contains(LogicalKeyboardKey.keyA);
+    final isMoveRight = keysPressed.contains(LogicalKeyboardKey.arrowRight)||keysPressed.contains(LogicalKeyboardKey.keyD);
+    if(isKeyDown){
+      if(isMoveTop){
+        AudioUtils.swipe();
+        if(isHelp){
+          if(_map.help![stepHelp]==1){
+            stepHelp++;
+            drawHand();
+            onSwipeTop();
+          }
+        }else{
+          onSwipeTop();
+        }
+        return KeyEventResult.ignored;
+      }
+      if(isMoveBottom){
+        AudioUtils.swipe();
+        if(isHelp){
+          if(_map.help![stepHelp]==3){
+            stepHelp++;
+            drawHand();
+            onSwipeBottom();
+          }
+        }else{
+          onSwipeBottom();
+        }
+        return KeyEventResult.ignored;
+      }
+      if(isMoveLeft){
+        AudioUtils.swipe();
+        if(isHelp){
+          if(_map.help![stepHelp]==4){
+            stepHelp++;
+            drawHand();
+            onSwipeLeft();
+          }
+        }else{
+          onSwipeLeft();
+        }
+        return KeyEventResult.ignored;
+      }
+      if(isMoveRight){
+        AudioUtils.swipe();
+        if(isHelp){
+          if(_map.help![stepHelp]==2){
+            stepHelp++;
+            drawHand();
+            onSwipeRight();
+          }
+        }else{
+          onSwipeRight();
+        }
+        return KeyEventResult.ignored;
+      }
+    }
+    return KeyEventResult.ignored;
   }
 
   void onSwipeTop(){

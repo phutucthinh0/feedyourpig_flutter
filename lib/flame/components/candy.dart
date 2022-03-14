@@ -1,11 +1,14 @@
 import 'package:feedyourpig_flutter/enum/candy_enum.dart';
 import 'package:flame/components.dart';
 
+import '../../database.dart';
+
 class Candy extends SpriteAnimationGroupComponent {
   @override
   Future<void> onLoad() async{
     await super.onLoad();
-    final normal_sprite = [Sprite.load('candy/candy0.png')];
+    int type = db.getCandySkin();
+    final normal_sprite = [Sprite.load('candy/candy${type}.png')];
     final normalAnimation = await SpriteAnimation.spriteList(
       await Future.wait(normal_sprite),
       stepTime: 10

@@ -6,6 +6,8 @@ import 'package:feedyourpig_flutter/widgets/container_flexible.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../database.dart';
+
 
 
 class GalleryScreen extends StatefulWidget {
@@ -19,12 +21,14 @@ class _GalleryScreenState extends State<GalleryScreen> {
   late PageController controller;
   AssetImage _candyCharacter = AssetImage(CandyCode.type0);
   _handleSelectedCandy(int typeCandy){
+    db.setCandySkin(typeCandy);
     setState(() {
       _candyCharacter = AssetImage(CandyCode.listCandy()[typeCandy]);
     });
   }
   AssetImage _pigCharacter = AssetImage(PigCode.type0);
   _handleSelectedPig(int typePig){
+    db.setPigCharacter(typePig);
     setState(() {
       _pigCharacter = AssetImage(PigCode.listPig()[typePig]);
     });

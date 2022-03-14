@@ -19,5 +19,18 @@ class DB {
   bool getSound(){
     return prefs.getBool('sound') ?? true;
   }
+
+  Future<void> setPigCharacter(int val)async{
+    await prefs.setInt('pig', val);
+  }
+  int getPigCharacter(){
+    return prefs.getInt('pig') ?? 0;
+  }
+  Future<void> setCandySkin(int val)async{
+    await prefs.setInt('candy', val);
+  }
+  int getCandySkin(){
+    return prefs.getInt('candy') ?? 0;
+  }
 }
 DB db = DB();

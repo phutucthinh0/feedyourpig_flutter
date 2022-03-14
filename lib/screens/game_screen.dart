@@ -120,7 +120,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
           return true;
         },
         child: Scaffold(
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Colors.white,
           body: ContainerFlexible(
             decoration: BoxDecoration(image: DecorationImage(image: AssetImage("assets/images/background/background.png"), fit: BoxFit.cover)),
             child: Stack(
