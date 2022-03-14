@@ -4,6 +4,8 @@ import 'package:feedyourpig_flutter/helper/text_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../utils/system/audio_utils.dart';
+
 Future<void> showDialogPause(BuildContext context, VoidCallback Function() backToMaze, VoidCallback Function() backToMap) async{
   return await showDialog(
     context: context,
@@ -46,6 +48,7 @@ Future<void> showDialogPause(BuildContext context, VoidCallback Function() backT
                         child: Icon(Icons.home_outlined),
                       ),
                       onPressed: () {
+                        AudioUtils.click();
                         Get.back();
                         backToMaze();
                       },
@@ -65,6 +68,7 @@ Future<void> showDialogPause(BuildContext context, VoidCallback Function() backT
                         child: Icon(Icons.play_arrow),
                       ),
                       onPressed: () {
+                        AudioUtils.click();
                         Get.back();
                       },
                     ),
@@ -83,6 +87,7 @@ Future<void> showDialogPause(BuildContext context, VoidCallback Function() backT
                         child: Icon(Icons.menu_sharp),
                       ),
                       onPressed: () {
+                        AudioUtils.click();
                         Get.back();
                         backToMap();
                       },

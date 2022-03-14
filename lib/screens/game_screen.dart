@@ -8,6 +8,7 @@ import 'package:feedyourpig_flutter/helper/text_ui.dart';
 import 'package:feedyourpig_flutter/models/maze_model.dart';
 import 'package:feedyourpig_flutter/screens/gallery_screen.dart';
 import 'package:feedyourpig_flutter/screens/play_screen.dart';
+import 'package:feedyourpig_flutter/utils/system/audio_utils.dart';
 import 'package:feedyourpig_flutter/widgets/container_flexible.dart';
 import 'package:feedyourpig_flutter/widgets/dialogs/dialog_win.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
   late PageController controller;
   double currentPage = 0.0;
   _handleSelectedMaze(int mazeId){
+    AudioUtils.click();
     choose_maze_id = mazeId;
     _gameController.maze(_listMaze[mazeId]);
     background_screen = Image(width: double.infinity, height: double.infinity, image: AssetImage(AssetsHelper.listBackgroundAddress[mazeId]), fit: BoxFit.cover);
@@ -47,6 +49,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
     _handleBlackScreen();
   }
   _handleSelectedMap(int mapId)async{
+    AudioUtils.click();
     _gameController.choose_map_id(mapId);
     _gameController.map(await GameHelper.getMap(_gameController.maze.value, mapId));
     willScreen = Screen.Play;
@@ -149,6 +152,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
   Widget _buildScreen(){
     switch(_gameController.screen.value){
       case Screen.ChooseMaze:{
+        controller = PageController(initialPage: choose_maze_id, viewportFraction: 0.7);
         return Stack(
             children: [
               AssetsHelper.backgroundGameScreen,
@@ -199,6 +203,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
                   margin: EdgeInsets.only(bottom: 60,left: 25),
                   src: 'assets/images/icon/ic_back.png',
                   onTap: (){
+                    AudioUtils.click();
                     Navigator.pop(context);
                   },
                 ),
@@ -252,7 +257,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
                         Positioned(
                           left: 2,
                           bottom: 2,
-                          child: TextUI(index.toString().length==1?" "+index.toString():index.toString(),fontSize: 18,color: Colors.white,),
+                          child: TextUI((index+1).toString().length==1?" "+(index+1).toString():(index+1).toString(),fontSize: 18,color: Colors.white,),
                         ),
                         Align(
                           alignment: Alignment.center,
@@ -274,6 +279,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
                 margin: EdgeInsets.only(bottom: 60,left: 25),
                 src: 'assets/images/icon/ic_back.png',
                 onTap: (){
+                  AudioUtils.click();
                   _handleBackToMaze();
                 },
 
@@ -295,6 +301,7 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
                 margin: EdgeInsets.only(top: 10, right:  10),
                 src: 'assets/images/icon/ic_pause.png',
                 onTap: (){
+                  AudioUtils.click();
                   showDialogPause(context, ()=>_handleBackToMaze(), ()=>_handleBackToMap());
                 },
               ),
@@ -306,7 +313,10 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
                 height: 40,
                 margin: EdgeInsets.only(top: 10, right:  60),
                 src: 'assets/images/icon/ic_replay.png',
-                onTap: ()=>_handleReplay(),
+                onTap: (){
+                  AudioUtils.click();
+                  _handleReplay();
+                },
               ),
             )
           ],

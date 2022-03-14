@@ -2,12 +2,16 @@
 import 'package:feedyourpig_flutter/helper/button_ui.dart';
 import 'package:feedyourpig_flutter/screens/gallery_screen.dart';
 import 'package:feedyourpig_flutter/screens/game_screen.dart';
+import 'package:feedyourpig_flutter/utils/system/audio_utils.dart';
 import 'package:feedyourpig_flutter/utils/system/ui_util.dart';
 import 'package:feedyourpig_flutter/widgets/container_flexible.dart';
 import 'package:feedyourpig_flutter/widgets/dialogs/dialog_close_game.dart';
 import 'package:feedyourpig_flutter/widgets/dialogs/dialog_setting.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../database.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -29,6 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
     // full screen background
     UIUtil.fullscreen();
     //Coach mark
+    if(db.getMusic()){
+      AudioUtils.playMusic();
+    }
   }
   @override
   void dispose() {
@@ -55,8 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 48,
                   src: 'assets/images/button/btnstylenext.png',
                   margin: EdgeInsets.only(bottom: 40),
-                  onTap: ()=>Get.to(()=>GameScreen(),transition: Transition.rightToLeftWithFade , duration: Duration(milliseconds: 500)) ,
-
+                  onTap: (){
+                    AudioUtils.click();
+                    Get.to(()=>GameScreen(),transition: Transition.rightToLeftWithFade , duration: Duration(milliseconds: 500));
+                  },
                 ),
               ),
               Align(
@@ -65,7 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 36,
                   src: 'assets/images/button/btnstylenext.png',
                   margin: EdgeInsets.only(top: 140),
-                  onTap:()=>Get.to(()=>GalleryScreen(),transition: Transition.rightToLeftWithFade , duration: Duration(milliseconds: 500)) ,
+                  onTap:(){
+                    AudioUtils.click();
+                    Get.to(()=>GalleryScreen(),transition: Transition.rightToLeftWithFade , duration: Duration(milliseconds: 500));
+                  },
                 ),
               ),
               Align(
@@ -75,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   src: 'assets/images/button/btnstylenext.png',
                   margin: EdgeInsets.only(top:320),
                   onTap: (){
+                    AudioUtils.click();
                     showDialogSetting(context);
                   },
                 ),

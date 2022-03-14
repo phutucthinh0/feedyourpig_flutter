@@ -27,6 +27,7 @@ import 'package:get/get.dart';
 
 import '../constants/box_constant.dart';
 import '../helper/game_helper.dart';
+import '../utils/system/audio_utils.dart';
 import 'components/candy.dart';
 import 'components/hidden_bomb.dart';
 import 'components/ice.dart';
@@ -185,9 +186,11 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
   void onVerticalDragEnd(DragEndInfo info) {
     super.onVerticalDragEnd(info);
     if(info.velocity.y < 0){
+      AudioUtils.swipe();
       onSwipeTop();
     }
     if(info.velocity.y > 0){
+      AudioUtils.swipe();
       onSwipeBottom();
     }
   }
@@ -197,15 +200,16 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     // TODO: implement onHorizontalDragEnd
     super.onHorizontalDragEnd(info);
     if(info.velocity.x < 0){
+      AudioUtils.swipe();
       onSwipeLeft();
     }
     if(info.velocity.x > 0){
+      AudioUtils.swipe();
       onSwipeRight();
     }
   }
 
   void onSwipeTop(){
-    print('--------Swipe Top');
     if(doingAnimationCandy)return;
     for (int i = candy_p[1]; i >= 0; i--) {
       if (checkCandy(candy_p[0], i, 1)) break;
@@ -217,7 +221,6 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     animationCandy();
   }
   void onSwipeRight(){
-    print('--------Swipe Right');
     if(doingAnimationCandy)return;
     for (int i = candy_p[0]; i <= 10; i++) {
       if (checkCandy(i, candy_p[1], 2)) break;
@@ -229,7 +232,6 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     animationCandy();
   }
   void onSwipeBottom(){
-    print('--------Swipe Bottom');
     if(doingAnimationCandy)return;
     for(int i=candy_p[1]; i<=18; i++){
       if(checkCandy(candy_p[0],i,3)) break;
@@ -241,7 +243,6 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     animationCandy();
   }
   void onSwipeLeft(){
-    print('--------Swipe Left');
     if(doingAnimationCandy)return;
     for (int i = candy_p[0]; i >= 0; i--) {
       if (checkCandy(i, candy_p[1], 4)) break;
@@ -392,7 +393,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
           candy_p[1] = candyY + 1;
           if ((candyY == 0) || (_map.game![candyX][candyY - 1] != 0)) {
             checkPrepareWin();
-            // soundHelper.explosion();
+            AudioUtils.explosion();
             tnt_effect(candyX, candyY);
             return true;
           }
@@ -401,7 +402,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
         case 2: {
           candy_p[0] = candyX - 1;
           if ((candyX == 10) || (_map.game![candyX + 1][candyY] != 0)) {
-            // soundHelper.explosion();
+            AudioUtils.explosion();
             checkPrepareWin();
             tnt_effect(candyX, candyY);
             return true;
@@ -411,7 +412,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
         case 3: {
           candy_p[1] = candyY - 1;
           if ((candyY == 18) || (_map.game![candyX][candyY + 1] != 0)) {
-            // soundHelper.explosion();
+            AudioUtils.explosion();
             checkPrepareWin();
             tnt_effect(candyX, candyY);
             return true;
@@ -421,7 +422,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
         case 4: {
           candy_p[0] = candyX + 1;
           if ((candyX == 0) || (_map.game![candyX - 1][candyY] != 0)) {
-            // soundHelper.explosion();
+            AudioUtils.explosion();
             checkPrepareWin();
             tnt_effect(candyX, candyY);
             return true;
@@ -636,6 +637,20 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     if(box_star[0]!= -1){
       _listBox[box_star[0]][box_star[1]]!.add(RemoveEffect());
       _gameController.addLightStar();
+      switch(_gameController.lightStar.value){
+        case 1:{
+          AudioUtils.star1();
+          break;
+        }
+        case 2:{
+          AudioUtils.star2();
+          break;
+        }
+        case 3:{
+          AudioUtils.star3();
+          break;
+        }
+      }
       box_star[0]= -1;
       switch (box_star[2]){
         case 1:{
@@ -980,6 +995,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     if(isWin){
       candy.add(RemoveEffect());
       pig.current = PigState.eat;
+      AudioUtils.eating();
       onWin();
     }
   }
@@ -1000,6 +1016,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
       }
   }
   void onLose(int type){
+    AudioUtils.lose();
     double _duration = 0;
     switch (type){
       case -1:{
@@ -1073,6 +1090,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     });
   }
   void onWin(){
+    AudioUtils.win();
     Future.delayed(Duration(milliseconds: 500),(){
       _gameController.next(true);
     });

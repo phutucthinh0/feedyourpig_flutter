@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:feedyourpig_flutter/constants/system_constant.dart';
 import 'package:feedyourpig_flutter/helper/text_ui.dart';
+import 'package:feedyourpig_flutter/utils/system/audio_utils.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../database.dart';
 import 'home_screen.dart';
 
 
@@ -18,6 +21,8 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState(){
     super.initState();
     SystemConstant.initialize();
+    AudioUtils.initialize();
+    db.initialize();
     Timer(Duration(seconds: 2), ()=>Get.off(()=>HomeScreen()),);
   }
   Widget build(BuildContext context) {
