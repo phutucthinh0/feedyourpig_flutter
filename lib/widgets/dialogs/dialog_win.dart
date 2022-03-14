@@ -96,7 +96,7 @@ Future<void> showDialogWin(BuildContext context, VoidCallback Function() backToM
                               image: DecorationImage(
                             image: AssetImage('assets/images/button/btnstyle.png'),
                           )),
-                          child: Icon(Icons.arrow_back),
+                          child: Icon(Icons.replay_sharp),
                         ),
                         onPressed: () {
                           Get.back();

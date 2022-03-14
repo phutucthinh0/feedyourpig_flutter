@@ -1,6 +1,11 @@
 # feedyourpig_flutter
 
 A new Flutter application.
+## game play 
+
+Our game play: you just need to swipe left, right, up or down to bring the candy through the obstacles to pig’s mouth.
+The candy can interact with some kinds of boxes in the maze. We create the boxes in the maze with actions. 
+You can click to tutorial button to see the best tutorial.
 
 ## Getting Started
 
