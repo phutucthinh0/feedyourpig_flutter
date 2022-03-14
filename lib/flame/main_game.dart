@@ -8,6 +8,7 @@ import 'package:feedyourpig_flutter/enum/ice_enum.dart';
 import 'package:feedyourpig_flutter/enum/pig_enum.dart';
 import 'package:feedyourpig_flutter/enum/thorn_cement_enum.dart';
 import 'package:feedyourpig_flutter/flame/components/cement.dart';
+import 'package:feedyourpig_flutter/flame/components/hand.dart';
 import 'package:feedyourpig_flutter/flame/components/iceStar.dart';
 import 'package:feedyourpig_flutter/flame/components/liquidCement.dart';
 import 'package:feedyourpig_flutter/flame/components/net.dart';
@@ -41,6 +42,9 @@ import 'components/tnt.dart';
 import 'components/wood.dart';
 
 class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetector{
+  bool isHelp = false;
+  int stepHelp = 0;
+  SpriteComponent? hand;
   late SpriteAnimationGroupComponent pig;
   List<int> pig_p = [0,0];
   late SpriteAnimationGroupComponent candy;
@@ -71,6 +75,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    isHelp = _gameController.isHelp.value;
     _gameController.lightStar(0);
     _map = _gameController.map.value;
     net = Net();
@@ -94,7 +99,11 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     candy_p_old[1] = _map.prepare![3];
     candy.changePriorityWithoutResorting(2);
     add(candy);
-    
+  //  Draw ic_handle if isHelp
+    if(isHelp){
+      hand = Hand(candy_p[0], candy_p[1], _map.help![stepHelp]);
+      add(hand!);
+    }
   //  draw box from map
     for(int i=0; i<=10; i++)
       // ignore: curly_braces_in_flow_control_structures
@@ -187,11 +196,27 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     super.onVerticalDragEnd(info);
     if(info.velocity.y < 0){
       AudioUtils.swipe();
-      onSwipeTop();
+      if(isHelp){
+        if(_map.help![stepHelp]==1){
+          stepHelp++;
+          drawHand();
+          onSwipeTop();
+        }
+      }else{
+        onSwipeTop();
+      }
     }
     if(info.velocity.y > 0){
       AudioUtils.swipe();
-      onSwipeBottom();
+      if(isHelp){
+        if(_map.help![stepHelp]==3){
+          stepHelp++;
+          drawHand();
+          onSwipeBottom();
+        }
+      }else{
+        onSwipeBottom();
+      }
     }
   }
 
@@ -201,11 +226,27 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
     super.onHorizontalDragEnd(info);
     if(info.velocity.x < 0){
       AudioUtils.swipe();
-      onSwipeLeft();
+      if(isHelp){
+        if(_map.help![stepHelp]==4){
+          stepHelp++;
+          drawHand();
+          onSwipeLeft();
+        }
+      }else{
+        onSwipeLeft();
+      }
     }
     if(info.velocity.x > 0){
       AudioUtils.swipe();
-      onSwipeRight();
+      if(isHelp){
+        if(_map.help![stepHelp]==2){
+          stepHelp++;
+          drawHand();
+          onSwipeRight();
+        }
+      }else{
+        onSwipeRight();
+      }
     }
   }
 
@@ -584,8 +625,10 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
             Future.delayed(Duration(milliseconds: 450),(){
               doingAnimationCandy = false;
               remove(_listBox[i][j]!);
-              _listBox[i][j] = Star(i,j);
-              add(_listBox[i][j]!);
+              if(_map.game![i][j]==Box.star){
+                _listBox[i][j] = Star(i,j);
+                add(_listBox[i][j]!);
+              }
             });
           }
         }
@@ -696,7 +739,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
               add(_listBox[box_wood[0]][box_wood[1]-1]!);
               remove(_listBox[box_wood[0]][box_wood[1]]!);
             }else{
-              // hidden_bomb_effect(box_wood[0],box_wood[1] - 1);
+              hidden_bomb_effect(box_wood[0],box_wood[1] - 1);
             }
             box_wood[0] = -1;
           });
@@ -717,7 +760,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
               add(_listBox[box_wood[0]+1][box_wood[1]]!);
               remove(_listBox[box_wood[0]][box_wood[1]]!);
             }else{
-              // hidden_bomb_effect(box_wood[0],box_wood[1] - 1);
+              hidden_bomb_effect(box_wood[0],box_wood[1] - 1);
             }
             box_wood[0] = -1;
           });
@@ -738,7 +781,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
               add(_listBox[box_wood[0]][box_wood[1]+1]!);
               remove(_listBox[box_wood[0]][box_wood[1]]!);
             }else{
-              // hidden_bomb_effect(box_wood[0],box_wood[1] - 1);
+              hidden_bomb_effect(box_wood[0],box_wood[1] - 1);
             }
             box_wood[0] = -1;
           });
@@ -759,7 +802,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
               add(_listBox[box_wood[0]-1][box_wood[1]]!);
               remove(_listBox[box_wood[0]][box_wood[1]]!);
             }else{
-              // hidden_bomb_effect(box_wood[0],box_wood[1] - 1);
+              hidden_bomb_effect(box_wood[0],box_wood[1] - 1);
             }
             box_wood[0] = -1;
           });
@@ -997,6 +1040,17 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
       pig.current = PigState.eat;
       AudioUtils.eating();
       onWin();
+      if(isHelp) remove(hand!);
+      return;
+    }
+  }
+  void drawHand(){
+    if(stepHelp<_map.help!.length){
+      Future.delayed(Duration(milliseconds: 200),(){
+        remove(hand!);
+        hand = Hand(candy_p[0],candy_p[1],_map.help![stepHelp]);
+        add(hand!);
+      });
     }
   }
   void tnt_effect(int x, int y){
@@ -1091,6 +1145,7 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
   }
   void onWin(){
     AudioUtils.win();
+    _gameController.isHelp(false);
     Future.delayed(Duration(milliseconds: 500),(){
       _gameController.next(true);
     });
@@ -1136,6 +1191,18 @@ class MainGame extends FlameGame with VerticalDragDetector, HorizontalDragDetect
         SystemConstant.spaceWidth + SystemConstant.unitSize * dx,
         SystemConstant.spaceHeight + SystemConstant.unitSize * dy
     );
+  }
+  void hidden_bomb_effect(int x, int y){
+    _map.game![x][y] = Box.tntEffect;
+    if(_listBox[x][y]!=null)remove(_listBox[x][y]!);
+    _listBox[x][y] = TntEffect(x, y);
+    add(_listBox[x][y]!);
+    Future.delayed(Duration(milliseconds: 50),(){
+      if(_listBox[x][y]!=null)remove(_listBox[x][y]!);
+      _listBox[x][y]=null;
+      _map.game![x][y]=0;
+    });
+    AudioUtils.explosion();
   }
   @override
   Color backgroundColor() => Colors.transparent;

@@ -15,4 +15,5 @@ class GameController extends GetxController{
   var replay = false.obs;
   var next = false.obs;
   var choose_map_id = 0.obs;
+  var isHelp = false.obs;
 }

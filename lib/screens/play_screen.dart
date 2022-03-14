@@ -38,42 +38,6 @@ class _PlayScreenState extends State<PlayScreen> {
             game: MainGame(),
           ),
           Align(
-            alignment: Alignment.topLeft,
-            child: buttonUI(
-              width: 40,
-              height: 40,
-              margin: EdgeInsets.only(top: 10, left:  25),
-              src: 'assets/images/icon/ic_help.png',
-              onTap: (){
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          Align(
-            alignment: Alignment.topRight,
-            child: buttonUI(
-              width: 40,
-              height: 40,
-              margin: EdgeInsets.only(top: 10, right:  10),
-              src: 'assets/images/icon/ic_pause.png',
-              onTap: (){
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          Align(
-            alignment: Alignment.topRight,
-            child: buttonUI(
-              width: 40,
-              height: 40,
-              margin: EdgeInsets.only(top: 10, right:  60),
-              src: 'assets/images/icon/ic_replay.png',
-              onTap: (){
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          Align(
             alignment: Alignment.topCenter,
             child: Container(
               margin: EdgeInsets.only(top: 10),

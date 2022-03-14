@@ -65,11 +65,18 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
       _animBlack = true;
     });
   }
+  _handleHelp()async{
+    _gameController.isHelp(true);
+    _gameController.map(await GameHelper.getMap(_gameController.maze.value, _gameController.choose_map_id.value));
+    _gameController.replay(true);
+  }
   _handleReplay()async{
+    _gameController.isHelp(false);
     _gameController.map(await GameHelper.getMap(_gameController.maze.value, _gameController.choose_map_id.value));
     _gameController.replay(true);
   }
   _handleNext()async{
+    _gameController.isHelp(false);
     if(_gameController.choose_map_id.value==24){
       _handleBackToMaze();
     }else{
@@ -293,6 +300,19 @@ class _GameScreenState extends State<GameScreen> with SingleTickerProviderStateM
           children: [
             background_screen,
             PlayScreen(),
+            Align(
+              alignment: Alignment.topLeft,
+              child: buttonUI(
+                width: 40,
+                height: 40,
+                margin: EdgeInsets.only(top: 10, left:  25),
+                src: 'assets/images/icon/ic_help.png',
+                onTap: (){
+                  AudioUtils.click();
+                  _handleHelp();
+                },
+              ),
+            ),
             Align(
               alignment: Alignment.topRight,
               child: buttonUI(
