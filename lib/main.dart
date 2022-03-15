@@ -1,3 +1,4 @@
+import 'package:feedyourpig_flutter/helper/custom_behavior.dart';
 import 'package:feedyourpig_flutter/screens/home_screen.dart';
 import 'package:feedyourpig_flutter/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Nolan'
       ),
+      scrollBehavior: MyCustomScrollBehavior(),
       home: SplashScreen(),
     );
   }
